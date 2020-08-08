@@ -8,6 +8,8 @@ import requests
 from hashlib import sha256
 from urllib.parse import urlencode
 
+import formatter
+
 ## API Object imports
 import spot_api
 import wapi_api
@@ -56,7 +58,7 @@ class Binance_REST:
         return(self.param_check(spot_api.get_agg_trades, kwargs))
 
     def get_candles(self, **kwargs):
-        return(self.param_check(spot_api.get_candles, kwargs))
+        return(formatter.format_candles(self.param_check(spot_api.get_candles, kwargs), 'SPOT'))
 
     def get_avg_price(self, **kwargs):
         return(self.param_check(spot_api.get_avg_price, kwargs))
@@ -264,8 +266,9 @@ class Binance_REST:
             missingParameters = []
 
             if 'symbol' in users_passed_parameters:
-                base, quote = users_passed_parameters['symbol'].split('-')
-                users_passed_parameters.update({'symbol':(quote+base).upper()})
+                if '-' in users_passed_parameters:
+                    base, quote = users_passed_parameters['symbol'].split('-')
+                    users_passed_parameters.update({'symbol':(quote+base).upper()})
 
             if 'R' in api_info.params:
                 for param in api_info.params['R']:

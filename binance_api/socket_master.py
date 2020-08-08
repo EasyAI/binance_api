@@ -7,6 +7,10 @@ import hashlib
 import logging
 import websocket
 import threading
+
+import formatter
+
+import rest_master
 import websocket_api
 
 ## sets up the socket BASE for binances socket API.
@@ -30,12 +34,14 @@ class Binance_SOCK:
         self.query          = ''
         self.id_counter     = 0
 
+        self.BASE_CANDLE_LIMIT = 50
+        self.BASE_DEPTH_LIMIT = 20
+
+
         ## For locally managed data.
-        self.local_manage   = []
-        self.candle_update_markets = []
-        self.book_update_markets = []
-        self.candle_data    = None
-        self.book_data      = None
+        self.live_and_historic_data = False
+        self.candle_data    = {}
+        self.book_data      = {}
 
         self.userDataStream_added = False
         self.listen_key = None
@@ -74,7 +80,6 @@ class Binance_SOCK:
 
     def set_property(self, **kwargs):
         ''' combined = true'''
-        print(kwargs)
         return(self._send_message('SET_PROPERTY', **kwargs))
 
     def get_property(self):
@@ -123,14 +128,30 @@ class Binance_SOCK:
 
 
     def set_manual_depth_stream(self, **kwargs):
-        result = self.param_check(websocket_api.set_manual_depth_stream, kwargs)
-        if result == 'CREATED_STREAM_NAME':
-            if websocket_api.set_manual_depth_stream.data_type not in self.local_manage:
-                self.local_manage.append(websocket_api.set_manual_depth_stream.data_type)
-            if kwargs['symbol'] not in self.book_update_markets:
-                self.book_update_markets.append(kwargs['symbol'])
+        return(self.param_check(websocket_api.set_manual_depth_stream, kwargs))
 
-        return(result)
+
+    ## ------------------ [FULL_DATA_EXCLUSIVE] ------------------ ##
+    def set_live_and_historic_combo(self):
+        self.live_and_historic_data = not(self.live_and_historic_data)
+        if self.candle_data != {}:
+            self.candle_data = {}
+
+
+    def get_live_depths(self):
+        return_books = {}
+
+        for key in self.book_data:
+            ask_Price_List = self.orderbook_sorter_algo(self.book_data[key]['a'], 'ask')
+            bid_Price_List = self.orderbook_sorter_algo(self.book_data[key]['b'], 'bid')
+
+            return_books.update({key:{'a':ask_Price_List, 'b':bid_Price_List}})
+
+        return(return_books)
+
+
+    def get_live_candles(self):
+        return(self.candle_data)
 
 
     ## ------------------ [USER_DATA_STREAM_EXCLUSIVE] ------------------ ##
@@ -157,7 +178,6 @@ class Binance_SOCK:
         lastUpdate = time.time()
 
         while self.listen_key != None:
-
             if (lastUpdate + 1800) < time.time():
                 AUTHENTICATED_REST.send_listenKey_keepAlive(listenKey=self.listen_key)
                 lastUpdate = time.time()
@@ -171,8 +191,9 @@ class Binance_SOCK:
                 missingParameters = []
 
                 if 'symbol' in users_passed_parameters:
-                    base, quote = users_passed_parameters['symbol'].split('-')
-                    users_passed_parameters.update({'symbol':(quote+base).lower()})
+                    if '-' in users_passed_parameters['symbol']:
+                        base, quote = users_passed_parameters['symbol'].split('-')
+                        users_passed_parameters.update({'symbol':(quote+base).lower()})
 
                 if 'R' in api_info.params:
                     for param in api_info.params['R']:
@@ -308,7 +329,6 @@ class Binance_SOCK:
         if params != None and params != []:
             message.update({'params':params})
 
-
         message = json.dumps(message)
 
         response_data = self.ws.sock.send(message)
@@ -335,21 +355,37 @@ class Binance_SOCK:
         This is used to handle any messages recived via the websocket.
         '''
         try:
-            data = json.loads(message)
+            raw_data = json.loads(message)
         except Exception as e:
-            print(e)
             print('json load')
+            raw_data = None
 
-        if 'id' in data:
-            if int(data['id']) in self.requested_items:
-                if data['result'] == None:
-                    self.requested_items[int(data['id'])] = True
+        if raw_data != None:
+            if 'data' in raw_data:
+                data = raw_data['data']
+            else: 
+                data = raw_data
+
+            if 'id' in data:
+                if int(data['id']) in self.requested_items:
+                    if data['result'] == None:
+                        self.requested_items[int(data['id'])] = True
+                    else:
+                        self.requested_items[int(data['id'])] = data['result']
+
+            if 'e' in data:
+                if self.live_and_historic_data:
+                    if data['e'] == 'kline':
+                        self.update_candles(data)
+                            
+                    elif data['e'] == 'depthUpdate':
+                        self.update_depth(data)
+
+                    else:
+                        self.socketBuffer.update({data['e']:data['s']})
+
                 else:
-                    self.requested_items[int(data['id'])] = data['result']
-                print(data)
-
-        if 'e' in data:
-            self.socketBuffer.update({data['e']:data['s']})
+                    self.socketBuffer.update({data['e']:data['s']})
 
 
     def _on_Ping(self, data):
@@ -382,3 +418,73 @@ class Binance_SOCK:
         print('closed')
         self.socketRunning = False
         logging.info('SOCKET: Socket closed.')
+
+
+    def update_candles(self, data):
+        rC = data['k']
+
+        if self.candle_data == {}:
+            hist_candles = rest_master.Binance_REST().get_candles(symbol=rC['s'], interval=rC['i'], limit=self.BASE_CANDLE_LIMIT)
+            self.candle_data.update({rC['s']:hist_candles})
+
+        live_candle_data = formatter.format_candles(rC, 'SOCK')
+
+        if live_candle_data[0] == self.candle_data[rC['s']][0][0]:
+            self.candle_data[rC['s']][0] = live_candle_data
+
+        else:
+            if live_candle_data[0] > self.candle_data[rC['s']][0][0]:
+                self.candle_data[rC['s']].insert(0, live_candle_data)
+
+
+    def update_depth(self, data):
+        if self.book_data == {}:
+            hist_books = formatter.format_depth(rest_master.Binance_REST().get_market_depth(symbol=data['s'], limit=self.BASE_DEPTH_LIMIT), 'SPOT')
+            self.book_data.update({data['s']:hist_books})
+
+        live_depth_data = formatter.format_depth(data, 'SOCK')
+
+        for lask in live_depth_data['a']:
+            if lask[1] in self.book_data[data['s']]['a']:
+                if lask[2] == 0.0:
+                    del self.book_data[data['s']]['a'][lask[1]]
+                    continue
+
+                if self.book_data[data['s']]['a'][lask[1]][0] >= lask[0]:
+                    continue
+
+            self.book_data[data['s']]['a'].update({lask[1]:[lask[0],lask[2]]})
+
+        for lbid in live_depth_data['b']:
+            if lbid[1] in self.book_data[data['s']]['b']:
+                if lbid[2] == 0.0:
+                    del self.book_data[data['s']]['b'][lbid[1]]
+                    continue
+
+                if self.book_data[data['s']]['b'][lbid[1]][0] >= lbid[0]:
+                    continue
+                
+            self.book_data[data['s']]['b'].update({lbid[1]:[lbid[0],lbid[2]]})
+
+        
+    def orderbook_sorter_algo(self, books_dict_base, side):
+        book_depth_organised = []
+
+        for price_key in books_dict_base:
+            depth_book = books_dict_base[price_key]
+            if book_depth_organised == []:
+                book_depth_organised = [[price_key, depth_book[1]]]
+                continue
+
+            for i, el in enumerate(book_depth_organised):
+                if price_key > el[0] and side == 'ask':
+                    break
+                if price_key < el[0] and side == 'bid':
+                    break
+
+            if side == 'ask':
+                book_depth_organised.append([price_key, depth_book[1]])
+            elif side == 'bid':
+                book_depth_organised.append([price_key, depth_book[1]])
+
+        return(book_depth_organised)
