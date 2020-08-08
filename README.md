@@ -14,6 +14,7 @@ I decided to re-do the api to as the one I was using was dated and I will update
   - wapi_api.py : This contains object datasets for each wapi api endpoint.
   - userDataStream_api.py : This contains object datasets for each user data stream api endpoint.
   - websocket_api.py : This contains object datasets for each websocket api stream.
+  - formatter.py : this is used for standerdizing formats when combinding rest data with socket data to combined update and live data together.
 
 ## Usage
 To quickly install all the required modules use 'pip3 install -r requirements', this should install the modules for you.
