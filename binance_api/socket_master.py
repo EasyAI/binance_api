@@ -35,7 +35,7 @@ class Binance_SOCK:
         self.id_counter     = 0
 
         self.BASE_CANDLE_LIMIT = 50
-        self.BASE_DEPTH_LIMIT = 20
+        self.BASE_DEPTH_LIMIT = 5
 
 
         ## For locally managed data.
@@ -463,28 +463,21 @@ class Binance_SOCK:
 
                 if self.book_data[data['s']]['b'][lbid[1]][0] >= lbid[0]:
                     continue
-                
+
             self.book_data[data['s']]['b'].update({lbid[1]:[lbid[0],lbid[2]]})
 
         
     def orderbook_sorter_algo(self, books_dict_base, side):
         book_depth_organised = []
 
-        for price_key in books_dict_base:
-            depth_book = books_dict_base[price_key]
-            if book_depth_organised == []:
-                book_depth_organised = [[price_key, depth_book[1]]]
-                continue
+        prices_list = list(books_dict_base.keys())
 
-            for i, el in enumerate(book_depth_organised):
-                if price_key > el[0] and side == 'ask':
-                    break
-                if price_key < el[0] and side == 'bid':
-                    break
+        if side == 'ask':
+            prices_list.sort(reverse=True)
+        elif side == 'bid':
+            prices_list.sort()
 
-            if side == 'ask':
-                book_depth_organised.append([price_key, depth_book[1]])
-            elif side == 'bid':
-                book_depth_organised.append([price_key, depth_book[1]])
+        for price in prices_list:
+            book_depth_organised.append([price, books_dict_base[price][1]])
 
         return(book_depth_organised)
