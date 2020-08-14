@@ -8,10 +8,10 @@ import logging
 import websocket
 import threading
 
-import formatter
+from . import formatter
 
-import rest_master
-import websocket_api
+from . import rest_master
+from . import websocket_api
 
 ## sets up the socket BASE for binances socket API.
 SOCKET_BASE = 'wss://stream.binance.com:9443'
@@ -26,7 +26,6 @@ class Binance_SOCK:
         self.MAX_REQUEST_ITEMS  = 10
         self.requested_items    = {}
 
-
         self.socketRunning  = False
         self.socketBuffer   = {}
         self.ws             = None
@@ -34,14 +33,13 @@ class Binance_SOCK:
         self.query          = ''
         self.id_counter     = 0
 
-        self.BASE_CANDLE_LIMIT = 50
-        self.BASE_DEPTH_LIMIT = 5
-
+        self.BASE_CANDLE_LIMIT = 600
+        self.BASE_DEPTH_LIMIT = 50
 
         ## For locally managed data.
         self.live_and_historic_data = False
-        self.candle_data    = {}
-        self.book_data      = {}
+        self.candle_data        = {}
+        self.book_data          = {}
 
         self.userDataStream_added = False
         self.listen_key = None
@@ -68,6 +66,15 @@ class Binance_SOCK:
         return('QUERY_BUILT_SUCCESSFULLY')
 
 
+    def clear_query(self):
+        self.query              = ''
+        self.stream_names       = []
+        self.candles_markets    = []
+        self.book_markets       = []
+
+        return('QUERY_CLEARED')
+
+
     ## ------------------ [MANUAL_CALLS_EXCLUSIVE] ------------------ ##
     def subscribe_streams(self, **kwargs):
         return(self._send_message('SUBSCRIBE', **kwargs))
@@ -90,65 +97,67 @@ class Binance_SOCK:
     def set_aggTrade_stream(self, **kwargs):
         return(self.param_check(websocket_api.set_aggTrade_stream, kwargs))
 
-
     def set_trade_stream(self, **kwargs):
         return(self.param_check(websocket_api.set_trade_stream, kwargs))
-
 
     def set_candle_stream(self, **kwargs):
         return(self.param_check(websocket_api.set_candle_stream, kwargs))
 
-
     def set_miniTicker_stream(self, **kwargs):
         return(self.param_check(websocket_api.set_miniTicker_stream, kwargs))
-
 
     def set_global_miniTicker_stream(self):
         return(self.param_check(websocket_api.set_global_miniTicker_stream))
 
-
     def set_ticker_stream(self, **kwargs):
         return(self.param_check(websocket_api.set_ticker_stream, kwargs))
-
 
     def set_gloal_ticker_stream(self):
         return(self.param_check(websocket_api.set_gloal_ticker_stream))
 
-
     def set_bookTicker_stream(self, **kwargs):
         return(self.param_check(websocket_api.set_bookTicker_stream, kwargs))
-
 
     def set_global_bookTicker_stream(self):
         return(self.param_check(websocket_api.set_global_bookTicker_stream))
 
-
     def set_partialBookDepth_stream(self, **kwargs):
         return(self.param_check(websocket_api.set_partialBookDepth_stream, kwargs))
-
 
     def set_manual_depth_stream(self, **kwargs):
         return(self.param_check(websocket_api.set_manual_depth_stream, kwargs))
 
 
     ## ------------------ [FULL_DATA_EXCLUSIVE] ------------------ ##
-    def set_live_and_historic_combo(self):
+    def set_live_and_historic_combo(self, rest_api):
+        if not(self.live_and_historic_data):
+            for stream in self.stream_names:
+                symbol = stream.split('@')[0].upper()
+                if 'kline' in stream:
+                    self._set_initial_candles(symbol, stream.split('_')[1], rest_api)
+                if 'depth' in stream:
+                    self._set_initial_depth(symbol, rest_api)
+                time.sleep(1)
+
+            RETURN_MESSAGE = 'STARTED_HISTORIC_DATA'
+        else:
+            if self.candle_data != {}:
+                self.candle_data = {}
+
+            RETURN_MESSAGE = 'STOPPED_HISTORIC_DATA'
+
         self.live_and_historic_data = not(self.live_and_historic_data)
-        if self.candle_data != {}:
-            self.candle_data = {}
+
+        return(RETURN_MESSAGE)
 
 
     def get_live_depths(self):
         return_books = {}
-
         for key in self.book_data:
-            ask_Price_List = self.orderbook_sorter_algo(self.book_data[key]['a'], 'ask')
-            bid_Price_List = self.orderbook_sorter_algo(self.book_data[key]['b'], 'bid')
-
+            ask_Price_List = self._orderbook_sorter_algo(self.book_data[key]['a'], 'ask')
+            bid_Price_List = self._orderbook_sorter_algo(self.book_data[key]['b'], 'bid')
             return_books.update({key:{'a':ask_Price_List, 'b':bid_Price_List}})
-
         return(return_books)
-
 
     def get_live_candles(self):
         return(self.candle_data)
@@ -157,14 +166,13 @@ class Binance_SOCK:
     ## ------------------ [USER_DATA_STREAM_EXCLUSIVE] ------------------ ##
     def set_userDataStream(self, AUTHENTICATED_REST, remove_stream=False):
         if remove_stream:
-            message = self.param_check(websocket_api.set_partialBookDepth_stream, {'listenKey':self.listen_key, 'remove_stream':True})
+            message = self.param_check(None, {'listenKey':self.listen_key, 'remove_stream':True})
             self.listen_key = None
         else:
             if self.listen_key == None:
 
                 listen_key = AUTHENTICATED_REST.get_listenKey()['listenKey']
-
-                message = self.param_check(websocket_api.set_partialBookDepth_stream, {'listenKey':listen_key})
+                message = self.param_check(None, {'listenKey':listen_key})
                 self.listen_key = listen_key
 
                 logging.info('SOCKET: Starting local managing')
@@ -172,7 +180,6 @@ class Binance_SOCK:
                 lkkaT.start()
 
         return(message)
-
 
     def listenKey_keepAlive(self, AUTHENTICATED_REST):
         lastUpdate = time.time()
@@ -276,7 +283,7 @@ class Binance_SOCK:
         ## -------------------------------------------------------------- ##
         ## Here the 'create_socket' function is called to attempt a connection to the socket.
         logging.debug('SOCKET: Setting up socket connection.')
-        self.create_socket()
+        self._create_socket()
 
         ## -------------------------------------------------------------- ##
         # This block is used to test connectivity to the socket.
@@ -305,7 +312,7 @@ class Binance_SOCK:
         self.ws = None
 
 
-    def create_socket(self):
+    def _create_socket(self):
         '''
         This is used to initilise connection and set it up to the exchange.
         '''
@@ -358,6 +365,7 @@ class Binance_SOCK:
             raw_data = json.loads(message)
         except Exception as e:
             print('json load')
+            print(e)
             raw_data = None
 
         if raw_data != None:
@@ -376,16 +384,17 @@ class Binance_SOCK:
             if 'e' in data:
                 if self.live_and_historic_data:
                     if data['e'] == 'kline':
-                        self.update_candles(data)
+                        self._update_candles(data)
                             
                     elif data['e'] == 'depthUpdate':
-                        self.update_depth(data)
+                        self._update_depth(data)
 
                     else:
-                        self.socketBuffer.update({data['e']:data['s']})
+                        print(data) 
+                        self.socketBuffer.update({data['e']:data})
 
                 else:
-                    self.socketBuffer.update({data['e']:data['s']})
+                    self.socketBuffer.update({data['e']:data})
 
 
     def _on_Ping(self, data):
@@ -420,12 +429,18 @@ class Binance_SOCK:
         logging.info('SOCKET: Socket closed.')
 
 
-    def update_candles(self, data):
-        rC = data['k']
+    def _set_initial_candles(self, symbol, interval, rest_api):
+        hist_candles = rest_api.get_candles(symbol=symbol, interval=interval, limit=self.BASE_CANDLE_LIMIT)
+        self.candle_data.update({symbol:hist_candles})
 
-        if self.candle_data == {}:
-            hist_candles = rest_master.Binance_REST().get_candles(symbol=rC['s'], interval=rC['i'], limit=self.BASE_CANDLE_LIMIT)
-            self.candle_data.update({rC['s']:hist_candles})
+
+    def _set_initial_depth(self, symbol, rest_api):
+        hist_books = formatter.format_depth(rest_api.get_market_depth(symbol=symbol, limit=self.BASE_DEPTH_LIMIT), 'SPOT')
+        self.book_data.update({symbol:hist_books})
+
+
+    def _update_candles(self, data):
+        rC = data['k']
 
         live_candle_data = formatter.format_candles(rC, 'SOCK')
 
@@ -437,11 +452,7 @@ class Binance_SOCK:
                 self.candle_data[rC['s']].insert(0, live_candle_data)
 
 
-    def update_depth(self, data):
-        if self.book_data == {}:
-            hist_books = formatter.format_depth(rest_master.Binance_REST().get_market_depth(symbol=data['s'], limit=self.BASE_DEPTH_LIMIT), 'SPOT')
-            self.book_data.update({data['s']:hist_books})
-
+    def _update_depth(self, data):
         live_depth_data = formatter.format_depth(data, 'SOCK')
 
         for lask in live_depth_data['a']:
@@ -467,7 +478,7 @@ class Binance_SOCK:
             self.book_data[data['s']]['b'].update({lbid[1]:[lbid[0],lbid[2]]})
 
         
-    def orderbook_sorter_algo(self, books_dict_base, side):
+    def _orderbook_sorter_algo(self, books_dict_base, side):
         book_depth_organised = []
 
         prices_list = list(books_dict_base.keys())

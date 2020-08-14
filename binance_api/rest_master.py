@@ -8,13 +8,13 @@ import requests
 from hashlib import sha256
 from urllib.parse import urlencode
 
-import formatter
+from . import formatter
 
 ## API Object imports
-import spot_api
-import wapi_api
-import margin_api
-import userDataStream_api
+from . import spot_api
+from . import wapi_api
+from . import margin_api
+from . import userDataStream_api
 
 
 ## sets up the rest BASE for binances rest API.
@@ -27,12 +27,13 @@ REQUIRE_SIGNATURE = ['USER_DATA', 'TRADE', 'MARGIN']
 
 class Binance_REST:
 
-    def __init__(self, default_api_type=None, public_key=None, private_key=None):
+    def __init__(self, public_key=None, private_key=None, default_api_type=None):
         self.requests_made  = 0
         self.errors         = 0
-        self.default_api_type = default_api_type
-        self.public_key = public_key
-        self.private_key = private_key
+
+        self.default_api_type   = default_api_type
+        self.public_key         = public_key
+        self.private_key        = private_key
 
 
     ## ------------------ [SPOT_EXCLUSIVE] ------------------ ##
@@ -58,7 +59,10 @@ class Binance_REST:
         return(self.param_check(spot_api.get_agg_trades, kwargs))
 
     def get_candles(self, **kwargs):
-        return(formatter.format_candles(self.param_check(spot_api.get_candles, kwargs), 'SPOT'))
+        candle_data = self.param_check(spot_api.get_candles, kwargs)
+        if not('error' in candle_data):
+            return(formatter.format_candles(candle_data, 'SPOT'))
+        else: return(candle_data)
 
     def get_avg_price(self, **kwargs):
         return(self.param_check(spot_api.get_avg_price, kwargs))
@@ -326,5 +330,7 @@ class Binance_REST:
 
        	api_resp = requests.request(method, urlQuery, headers=headers)
         data = api_resp.json()
+
+        self.requests_made += 1
 
         return(data)
