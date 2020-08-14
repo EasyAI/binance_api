@@ -268,6 +268,7 @@ class Binance_REST:
     def param_check(self, api_info, users_passed_parameters=None):
         if api_info.params != None:
             missingParameters = []
+            allParams = []
 
             if 'symbol' in users_passed_parameters:
                 if '-' in users_passed_parameters:
@@ -275,14 +276,17 @@ class Binance_REST:
                     users_passed_parameters.update({'symbol':(quote+base).upper()})
 
             if 'R' in api_info.params:
+                allParams += api_info.params['R']
                 for param in api_info.params['R']:
                     if not(param in users_passed_parameters):
                         missingParameters.append(param)
 
+            if 'O' in api_info.params:
+                allParams += api_info.params['O']
+
             if len(missingParameters) >= 1:
                 return('MISSING_REQUIRED_PARAMETERS', missingParameters)
 
-            allParams = api_info.params['R'] + api_info.params['O']
             unknownParams = []
 
             for param in users_passed_parameters:
