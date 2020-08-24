@@ -281,11 +281,11 @@ class Binance_REST:
                     if not(param in users_passed_parameters):
                         missingParameters.append(param)
 
-            if 'O' in api_info.params:
-                allParams += api_info.params['O']
-
             if len(missingParameters) >= 1:
                 return('MISSING_REQUIRED_PARAMETERS', missingParameters)
+
+            if 'O' in api_info.params:
+                allParams += api_info.params['O']
 
             unknownParams = []
 

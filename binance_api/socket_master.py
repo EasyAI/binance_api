@@ -33,7 +33,7 @@ class Binance_SOCK:
         self.query          = ''
         self.id_counter     = 0
 
-        self.BASE_CANDLE_LIMIT = 600
+        self.BASE_CANDLE_LIMIT = 850
         self.BASE_DEPTH_LIMIT = 50
 
         ## For locally managed data.
@@ -390,8 +390,10 @@ class Binance_SOCK:
                         self._update_depth(data)
 
                     else:
-                        print(data) 
-                        self.socketBuffer.update({data['e']:data})
+                        if 'outboundAccountInfo' == data['e']:
+                            self.socketBuffer.update({data['e']:data})
+                        else:
+                            self.socketBuffer.update({data['s']:{data['e']:data}})
 
                 else:
                     self.socketBuffer.update({data['e']:data})
@@ -484,9 +486,9 @@ class Binance_SOCK:
         prices_list = list(books_dict_base.keys())
 
         if side == 'ask':
-            prices_list.sort(reverse=True)
-        elif side == 'bid':
             prices_list.sort()
+        elif side == 'bid':
+            prices_list.sort(reverse=True)
 
         for price in prices_list:
             book_depth_organised.append([price, books_dict_base[price][1]])
