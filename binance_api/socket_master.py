@@ -1,6 +1,6 @@
 #! /usr/bin/env python3
 
-
+import sys
 import time
 import json
 import hashlib
@@ -175,11 +175,12 @@ class Binance_SOCK:
                 message = self.param_check(None, {'listenKey':listen_key})
                 self.listen_key = listen_key
 
-                logging.info('SOCKET: Starting local managing')
+                logging.info('[SOCKET_MASTER] Starting local managing')
                 lkkaT = threading.Thread(target=self.listenKey_keepAlive, args=(AUTHENTICATED_REST,))
                 lkkaT.start()
 
         return(message)
+
 
     def listenKey_keepAlive(self, AUTHENTICATED_REST):
         lastUpdate = time.time()
@@ -274,7 +275,7 @@ class Binance_SOCK:
 
         ## -------------------------------------------------------------- ##
         ## Here the sockets URL is set so it can be connected to.NO_STREAMS_SET
-        logging.debug('SOCKET: Setting up socket stream URL.')
+        logging.debug('[SOCKET_MASTER] Setting up socket stream URL.')
         if self.query == '':
             if self.build_query() == 'NO_STREAMS_SET':
                 return('UNABLE_TO_START_NO_STREAMS_SET')
@@ -282,7 +283,7 @@ class Binance_SOCK:
 
         ## -------------------------------------------------------------- ##
         ## Here the 'create_socket' function is called to attempt a connection to the socket.
-        logging.debug('SOCKET: Setting up socket connection.')
+        logging.debug('[SOCKET_MASTER] Setting up socket connection.')
         self._create_socket()
 
         ## -------------------------------------------------------------- ##
@@ -298,7 +299,7 @@ class Binance_SOCK:
                 raise websocket.WebSocketTimeoutException('Couldn\'t connect to WS! Exiting.')
 
         self.socketRunning = True
-        logging.info('SOCKET: Sucessfully established the socket.')
+        logging.info('[SOCKET_MASTER] Sucessfully established the socket.')
 
 
     def stop(self):
@@ -354,7 +355,7 @@ class Binance_SOCK:
         '''
         This is called to manually open the websocket connection.
         '''
-        logging.debug('SOCKET: Websocket Opened.')
+        logging.debug('[SOCKET_MASTER] Websocket Opened.')
 
 
     def _on_Message(self, message):
@@ -364,7 +365,7 @@ class Binance_SOCK:
         try:
             raw_data = json.loads(message)
         except Exception as e:
-            print('json load')
+            print('section 2')
             print(e)
             raw_data = None
 
@@ -392,59 +393,75 @@ class Binance_SOCK:
                     else:
                         if 'outboundAccountInfo' == data['e']:
                             self.socketBuffer.update({data['e']:data})
+                        elif 'outboundAccountPosition' == data['e']:
+                            self.socketBuffer.update({data['e']:data})
                         else:
-                            self.socketBuffer.update({data['s']:{data['e']:data}})
-
+                            if data['e'] == 'balanceUpdate':
+                                pass
+                            else:
+                                try:
+                                    self.socketBuffer.update({data['s']:{data['e']:data}})
+                                except Exception as e:
+                                    print(e)
+                                    print('section 1')
+                                    print(raw_data)
                 else:
                     self.socketBuffer.update({data['e']:data})
+
 
 
     def _on_Ping(self, data):
         '''
         This is called to manually open the websocket connection.
         '''
-        logging.debug('SOCKET: Websocket Opened.')
+        logging.debug('[SOCKET_MASTER] Websocket ping.')
 
 
     def _on_Pong(self):
         '''
         This is called to manually open the websocket connection.
         '''
-        logging.debug('SOCKET: Websocket Opened.')
+        logging.debug('[SOCKET_MASTER] Websocket pong.')
 
 
     def _on_Error(self, error):
         '''
         This is called when the socket recives an connection based error.
         '''
-        print(error)
-        print('error')
-        logging.warning('SOCKET: {0}'.format(error))
+        logging.warning('[SOCKET_MASTER] Socket error: {0}'.format(error))
 
 
     def _on_Close(self):
         '''
         This is called for manually closing the websocket.
         '''
-        print('closed')
         self.socketRunning = False
-        logging.info('SOCKET: Socket closed.')
+        logging.info('[SOCKET_MASTER]: Socket closed.')
 
 
     def _set_initial_candles(self, symbol, interval, rest_api):
-        hist_candles = rest_api.get_candles(symbol=symbol, interval=interval, limit=self.BASE_CANDLE_LIMIT)
+        try:
+            hist_candles = rest_api.get_candles(symbol=symbol, interval=interval, limit=self.BASE_CANDLE_LIMIT)
+        except Exception as error:
+            logging.critical('[SOCKET_MASTER] _initial_candles error {0}'.format(error))
+            logging.warning('[SOCKET_MASTER] _initial_candles {0}'.format(hist_candles))
         self.candle_data.update({symbol:hist_candles})
 
 
     def _set_initial_depth(self, symbol, rest_api):
-        hist_books = formatter.format_depth(rest_api.get_market_depth(symbol=symbol, limit=self.BASE_DEPTH_LIMIT), 'SPOT')
+        try:
+            rest_data = rest_api.get_market_depth(symbol=symbol, limit=self.BASE_DEPTH_LIMIT)
+            hist_books = formatter.format_depth(rest_data, 'SPOT')
+        except Exception as error:
+            logging.critical('[SOCKET_MASTER] _set_initial_depth error {0}'.format(error))
+            logging.warning('[SOCKET_MASTER] _set_initial_depth {0}'.format(rest_data))
         self.book_data.update({symbol:hist_books})
 
 
     def _update_candles(self, data):
         rC = data['k']
 
-        live_candle_data = formatter.format_candles(rC, 'SOCK')
+        live_candle_data = formatter.format_candles(rC, 'SOCK')[:self.BASE_CANDLE_LIMIT]
 
         if live_candle_data[0] == self.candle_data[rC['s']][0][0]:
             self.candle_data[rC['s']][0] = live_candle_data
@@ -479,6 +496,22 @@ class Binance_SOCK:
 
             self.book_data[data['s']]['b'].update({lbid[1]:[lbid[0],lbid[2]]})
 
+        all_ask_prices = list(self.book_data[data['s']]['a'].keys())
+        all_ask_prices.sort()
+        if len(all_ask_prices) > self.BASE_DEPTH_LIMIT+1:
+            all_ask_prices_to_cut = all_ask_prices[self.BASE_DEPTH_LIMIT:]
+            for aPrice in all_ask_prices_to_cut:
+                if aPrice in self.book_data[data['s']]['a']:
+                    del self.book_data[data['s']]['a'][aPrice]
+
+        all_bid_prices = list(self.book_data[data['s']]['b'].keys())
+        all_bid_prices.sort(reverse=True)
+        if len(all_bid_prices) > self.BASE_DEPTH_LIMIT + 1:
+            all_bid_prices_to_cut = all_bid_prices[self.BASE_DEPTH_LIMIT:]
+            for bPrice in all_bid_prices_to_cut:
+                if bPrice in self.book_data[data['s']]['b']:
+                    del self.book_data[data['s']]['b'][bPrice]
+
         
     def _orderbook_sorter_algo(self, books_dict_base, side):
         book_depth_organised = []
@@ -490,7 +523,10 @@ class Binance_SOCK:
         elif side == 'bid':
             prices_list.sort(reverse=True)
 
+        prices_list = prices_list
+
         for price in prices_list:
-            book_depth_organised.append([price, books_dict_base[price][1]])
+            if price in books_dict_base:
+                book_depth_organised.append([price, books_dict_base[price][1]])
 
         return(book_depth_organised)
