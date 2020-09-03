@@ -26,6 +26,8 @@ class Binance_SOCK:
         self.MAX_REQUEST_ITEMS  = 10
         self.requested_items    = {}
 
+        self.last_data_recv_time = 0
+
         self.socketRunning  = False
         self.socketBuffer   = {}
         self.ws             = None
@@ -270,7 +272,7 @@ class Binance_SOCK:
         '''
         This is used to start the socket.
         '''
-        if self.ws != None and self.socketRunning:
+        if self.socketRunning:
             return('SOCKET_STILL_RUNNING_PLEASE_RESTART')
 
         ## -------------------------------------------------------------- ##
@@ -368,6 +370,8 @@ class Binance_SOCK:
             print('section 2')
             print(e)
             raw_data = None
+
+        self.last_data_recv_time = time.time()
 
         if raw_data != None:
             if 'data' in raw_data:

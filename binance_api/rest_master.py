@@ -332,8 +332,10 @@ class Binance_REST:
         else:
             headers = None
 
+        logging.debug('[REST_MASTER] QUERY URL {0}'.format(urlQuery))
        	api_resp = requests.request(method, urlQuery, headers=headers)
         data = api_resp.json()
+        logging.debug('[REST_MASTER] QUERY DATA {0}'.format(data))
 
         self.requests_made += 1
 
