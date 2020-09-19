@@ -53,8 +53,7 @@ class get_repayed_record:
 
 
 class get_account:
-    params = {'R':['asset'],
-    'O':['txId', 'startTime', 'endTime', 'current', 'size']}
+    params = None
     method = 'GET'
     endpoint = '/sapi/v1/margin/account'
     security_type = 'USER_DATA'

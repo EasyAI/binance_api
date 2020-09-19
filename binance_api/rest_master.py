@@ -199,14 +199,29 @@ class Binance_REST:
 
 
     ## ------------------ [USER_DATA_STREAM_EXCLUSIVE] ------------------ ##
-    def get_listenKey(self):
-        return(self.param_check(userDataStream_api.get_listenKey))
+    def get_listenKey(self, api_type=None):
+        if api_type == 'SPOT':
+            return(self.param_check(userDataStream_api.get_listenKey_spot))
+        elif api_type == 'MARGIN':
+            return(self.param_check(userDataStream_api.get_listenKey_margin))
+        elif api_type == None:
+            return('PLEASE_SPECIFY_API_TYPE, api_type=(MARGIN/SPOT)')
 
-    def send_listenKey_keepAlive(self, **kwargs):
-        return(self.param_check(userDataStream_api.send_listenKey_keepAlive, kwargs))
+    def send_listenKey_keepAlive(self, api_type='SPOT', **kwargs):
+        if api_type == 'SPOT':
+            return(self.param_check(userDataStream_api.send_listenKey_keepAlive_spot, kwargs))
+        elif api_type == 'MARGIN':
+            return(self.param_check(userDataStream_api.send_listenKey_keepAlive_margin, kwargs))
+        elif api_type == None:
+            return('PLEASE_SPECIFY_API_TYPE, api_type=(MARGIN/SPOT)')
 
-    def close_listenKey(self, **kwargs):
-        return(self.param_check(userDataStream_api.close_listenKey, kwargs))
+    def close_listenKey(self, api_type='SPOT', **kwargs):
+        if api_type == 'SPOT':
+            return(self.param_check(userDataStream_api.close_listenKey_spot, kwargs))
+        elif api_type == 'MARGIN':
+            return(self.param_check(userDataStream_api.close_listenKey_margin, kwargs))
+        elif api_type == None:
+            return('PLEASE_SPECIFY_API_TYPE, api_type=(MARGIN/SPOT)')
 
 
     ## ------------------ [MULTI_API_ENDPOINT] ------------------ ##
@@ -218,6 +233,8 @@ class Binance_REST:
             return(self.param_check(spot_api.place_order, kwargs))
         elif api_type == 'MARGIN':
             return(self.param_check(margin_api.place_order, kwargs))
+        elif api_type == None:
+            return('PLEASE_SPECIFY_API_TYPE, api_type=(MARGIN/SPOT)')
 
     def cancel_order(self, api_type=None, **kwargs):
         if api_type == None:
@@ -227,15 +244,19 @@ class Binance_REST:
             return(self.param_check(spot_api.cancel_order, kwargs, kwargs))
         elif api_type == 'MARGIN':
             return(self.param_check(margin_api.cancel_order, kwargs))
+        elif api_type == None:
+            return('PLEASE_SPECIFY_API_TYPE, api_type=(MARGIN/SPOT)')
 
-    def get_account(self, api_type=None, **kwargs):
+    def get_account(self, api_type=None):
         if api_type == None:
             api_type = self.default_api_type
 
         if api_type == 'SPOT':
-            return(self.param_check(spot_api.get_account, kwargs))
+            return(self.param_check(spot_api.get_account))
         elif api_type == 'MARGIN':
-            return(self.param_check(margin_api.get_account, kwargs))
+            return(self.param_check(margin_api.get_account))
+        elif api_type == None:
+            return('PLEASE_SPECIFY_API_TYPE, api_type=(MARGIN/SPOT)')
 
     def get_all_orders(self, api_type=None, **kwargs):
         if api_type == None:
@@ -245,6 +266,8 @@ class Binance_REST:
             return(self.param_check(spot_api.get_all_orders, kwargs))
         elif api_type == 'MARGIN':
             return(self.param_check(margin_api.get_all_orders, kwargs))
+        elif api_type == None:
+            return('PLEASE_SPECIFY_API_TYPE, api_type=(MARGIN/SPOT)')
 
     def get_all_trades(self, api_type=None, **kwargs):
         if api_type == None:
@@ -254,6 +277,8 @@ class Binance_REST:
             return(self.param_check(spot_api.get_all_trades, kwargs))
         elif api_type == 'MARGIN':
             return(self.param_check(margin_api.get_all_trades, kwargs))
+        elif api_type == None:
+            return('PLEASE_SPECIFY_API_TYPE, api_type=(MARGIN/SPOT)')
 
     def get_open_orders(self, api_type=None, **kwargs):
         if api_type == None:
@@ -263,6 +288,8 @@ class Binance_REST:
             return(self.param_check(spot_api.get_open_orders, kwargs))
         elif api_type == 'MARGIN':
             return(self.param_check(margin_api.get_open_orders, kwargs))
+        elif api_type == None:
+            return('PLEASE_SPECIFY_API_TYPE, api_type=(MARGIN/SPOT)')
 
 
     def param_check(self, api_info, users_passed_parameters=None):

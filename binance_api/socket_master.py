@@ -166,30 +166,31 @@ class Binance_SOCK:
 
 
     ## ------------------ [USER_DATA_STREAM_EXCLUSIVE] ------------------ ##
-    def set_userDataStream(self, AUTHENTICATED_REST, remove_stream=False):
+    def set_userDataStream(self, AUTHENTICATED_REST, user_data_stream_type, remove_stream=False):
         if remove_stream:
             message = self.param_check(None, {'listenKey':self.listen_key, 'remove_stream':True})
             self.listen_key = None
         else:
             if self.listen_key == None:
 
-                listen_key = AUTHENTICATED_REST.get_listenKey()['listenKey']
+                listen_key = AUTHENTICATED_REST.get_listenKey(user_data_stream_type)['listenKey']
+
                 message = self.param_check(None, {'listenKey':listen_key})
                 self.listen_key = listen_key
 
                 logging.info('[SOCKET_MASTER] Starting local managing')
-                lkkaT = threading.Thread(target=self.listenKey_keepAlive, args=(AUTHENTICATED_REST,))
+                lkkaT = threading.Thread(target=self.listenKey_keepAlive, args=(AUTHENTICATED_REST,user_data_stream_type))
                 lkkaT.start()
 
         return(message)
 
 
-    def listenKey_keepAlive(self, AUTHENTICATED_REST):
+    def listenKey_keepAlive(self, AUTHENTICATED_REST, user_data_stream_type):
         lastUpdate = time.time()
 
         while self.listen_key != None:
             if (lastUpdate + 1800) < time.time():
-                AUTHENTICATED_REST.send_listenKey_keepAlive(listenKey=self.listen_key)
+                AUTHENTICATED_REST.send_listenKey_keepAlive(user_data_stream_type, listenKey=self.listen_key)
                 lastUpdate = time.time()
 
             time.sleep(1)
