@@ -173,7 +173,13 @@ class Binance_SOCK:
         else:
             if self.listen_key == None:
 
-                listen_key = AUTHENTICATED_REST.get_listenKey(user_data_stream_type)['listenKey']
+                key_auth = AUTHENTICATED_REST.get_listenKey(user_data_stream_type)
+
+                if 'code' in key_auth:
+                    print(key_auth)
+                    return(key_auth)
+
+                listen_key = key_auth['listenKey']
 
                 message = self.param_check(None, {'listenKey':listen_key})
                 self.listen_key = listen_key
@@ -446,7 +452,7 @@ class Binance_SOCK:
 
     def _set_initial_candles(self, symbol, interval, rest_api):
         try:
-            hist_candles = rest_api.get_candles(symbol=symbol, interval=interval, limit=self.BASE_CANDLE_LIMIT)
+            hist_candles = rest_api.get_custom_candles(symbol=symbol, interval=interval, limit=self.BASE_CANDLE_LIMIT)
         except Exception as error:
             logging.critical('[SOCKET_MASTER] _initial_candles error {0}'.format(error))
             logging.warning('[SOCKET_MASTER] _initial_candles {0}'.format(hist_candles))

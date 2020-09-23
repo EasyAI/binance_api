@@ -9,6 +9,7 @@ from hashlib import sha256
 from urllib.parse import urlencode
 
 from . import formatter
+from . import custom_data_formatter
 
 ## API Object imports
 from . import spot_api
@@ -23,7 +24,6 @@ REST_BASE = 'https://api.binance.com'
 NO_REQUIREMENTS = ['NONE']
 REQUIRE_KEY = ['MARKET_DATA', 'USER_STREAM']
 REQUIRE_SIGNATURE = ['USER_DATA', 'TRADE', 'MARGIN']
-
 
 class Binance_REST:
 
@@ -58,9 +58,12 @@ class Binance_REST:
     def get_agg_trades(self, **kwargs):
         return(self.param_check(spot_api.get_agg_trades, kwargs))
 
+    def get_custom_candles(self, **kwargs):
+        return(custom_data_formatter.get_custom_candles(kwargs))
+
     def get_candles(self, **kwargs):
         candle_data = self.param_check(spot_api.get_candles, kwargs)
-        if not('error' in candle_data):
+        if not('error' in candle_data or 'code' in candle_data):
             return(formatter.format_candles(candle_data, 'SPOT'))
         else: return(candle_data)
 
