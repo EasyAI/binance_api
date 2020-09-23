@@ -9,6 +9,7 @@ I decided to re-do the api to as the one I was using was dated and I will update
 - binance_api
   - rest_master.py : This is where the main rest api object is created "Binance_REST".
   - socket_master.py : This is where the main socket api object is created "Binance_SOCK".
+  - custom_data_formatter.py : Holds logic to create custom candle intervals/limits.
   - margin_api.py : This contains object datasets for each margin api endpoint.
   - spot_api.py : This contains object datasets for each spot (normal) api endpoint.
   - wapi_api.py : This contains object datasets for each wapi api endpoint.
