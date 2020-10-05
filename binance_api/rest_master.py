@@ -244,7 +244,7 @@ class Binance_REST:
             api_type = self.default_api_type
 
         if api_type == 'SPOT':
-            return(self.param_check(spot_api.cancel_order, kwargs, kwargs))
+            return(self.param_check(spot_api.cancel_order, kwargs))
         elif api_type == 'MARGIN':
             return(self.param_check(margin_api.cancel_order, kwargs))
         elif api_type == None:
