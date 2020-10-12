@@ -24,18 +24,35 @@ def get_custom_candles(kwargs):
     interval_time_type = kwargs['interval'][-1]
 
     ##
-    interval_number_multiplier = kwargs['interval'][:-1]
+    interval_number_multiplier = int(kwargs['interval'][:-1])
 
     total_candles_left = kwargs['limit']
 
     c_limit = 0
     c_start_time = 0 if not 'startTime' in kwargs else kwargs['startTime']
     c_end_time = 0
+    best_interval = None
 
-    if interval_time_type == 'm' and not(interval_number_multiplier in kwargs['interval']):
-        pass
-    else: 
-        best_interval = kwargs['interval']
+    if interval_time_type == 'm':
+        best_interval = best_interval_calc(BASE_BINANCE_MINS, interval_number_multiplier, 60)
+    elif interval_time_type == 'h':
+        best_interval = best_interval_calc(BASE_BINANCE_HOURS, interval_number_multiplier, 24)
+    elif interval_time_type == 'd':
+        best_interval = best_interval_calc(BASE_BINANAE_DAYS, interval_number_multiplier, 7)
+    elif interval_time_type == 'w':
+        best_interval = best_interval_calc(BASE_BINANCE_WEEKS, interval_number_multiplier, 0)
+    else:
+        return('INVALIDE_TIMEFRAME')
+
+    if best_interval == None:
+        return('ERROR_INVALID_INTEVAL')
+
+    if best_interval == interval_number_multiplier:
+        total_candles_left = int(kwargs['limit'])
+    else:
+        total_candles_left = int(kwargs['limit']*(interval_number_multiplier/best_interval))
+
+    best_interval = '{0}{1}'.format(best_interval, interval_time_type)
 
     while True:
         if total_candles_left > 1000:
@@ -65,4 +82,26 @@ def get_custom_candles(kwargs):
         c_end_time = candles[-1][0]-1
         candle_data = candle_data + candles
 
+    if best_interval != kwargs['interval']:
+        pass
+
     return(candle_data)
+
+
+def best_interval_calc(base_intervals, target_interval, max_time):
+    best_interval = None
+
+    if max_time == 0:
+        return(target_interval)
+
+    if not(target_interval in base_intervals) and (max_time % target_interval == 0):
+        for current_interval in base_intervals:
+            if (current_interval < target_interval) and (target_interval % current_interval == 0):
+                best_interval = current_interval
+            elif current_interval > target_interval:
+                break
+
+    if target_interval in base_intervals:
+        best_interval = target_interval
+
+    return(best_interval)
