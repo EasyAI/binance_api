@@ -16,8 +16,46 @@ BASE_BINANCE_HOURS  = [1, 2, 4, 6, 8, 12]
 BASE_BINANAE_DAYS   = [1, 3]
 BASE_BINANCE_WEEKS  = [1]
 
-def get_custom_candles(kwargs):
 
+def get_custom_trades(kwargs):
+    ''' '''
+    trade_data = []
+    total_trades_left = kwargs['limit']
+    t_id = 0
+
+    authApi = rest_master.Binance_REST(kwargs['pubKey'], kwargs['prvKey'])
+
+    while True:
+        if total_trades_left > 1000:
+            total_trades_left -= 1000
+            t_limit = 1000
+
+        else:
+            if total_trades_left == 0:
+                break
+            else:
+                t_limit = total_trades_left
+                total_trades_left = 0
+
+        if t_id == 0:
+            trades = rest_master.Binance_REST().get_recent_trades(
+                symbol=kwargs['symbol'],
+                limit=t_limit)
+        else:
+            time.sleep(0.75)
+            trades = authApi.get_historical_trades(
+                symbol=kwargs['symbol'], 
+                limit=t_limit, 
+                fromId=t_id)
+
+        t_id = trades[-1]['id']
+        trade_data = trade_data + trades
+
+    return(trade_data)
+
+
+def get_custom_candles(kwargs):
+    ''' '''
     candle_data = []
 
     ##
@@ -83,7 +121,8 @@ def get_custom_candles(kwargs):
         candle_data = candle_data + candles
 
     if best_interval != kwargs['interval']:
-        pass
+        for candle in candle_data:
+            pass
 
     return(candle_data)
 

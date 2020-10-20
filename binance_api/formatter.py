@@ -34,6 +34,15 @@ def format_candles(raw_data, candleType):
     return(format_data)
 
 
+def format_trades(raw_data):
+    format_data = []
+    raw_data.reverse()
+    for t in raw_data:
+        t.update({'side': 'BUY' if t['isBuyerMaker'] else 'SELL'})
+        format_data.append(t)
+    return(format_data)
+
+
 def format_depth(raw_data, candleType):
     '''
     Candle format =

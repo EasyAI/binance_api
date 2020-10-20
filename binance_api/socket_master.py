@@ -220,7 +220,10 @@ class Binance_SOCK:
                 if len(missingParameters) >= 1:
                     return('MISSING_REQUIRED_PARAMETERS', missingParameters)
 
-                allParams = api_info.params['R'] + api_info.params['O']
+                if 'O' in api_info.params:
+                    allParams = api_info.params['R'] + api_info.params['O']
+                else:
+                    allParams = api_info.params['R']
                 unknownParams = []
 
                 for param in users_passed_parameters:

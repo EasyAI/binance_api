@@ -49,11 +49,18 @@ class Binance_REST:
     def get_market_depth(self, **kwargs):
         return(self.param_check(spot_api.get_market_depth, kwargs))
 
+    def get_custom_trades(self, **kwargs):
+        if kwargs['limit'] > 1000:
+            kwargs.update({'pubKey':self.public_key, 'prvKey':self.private_key})
+        return(custom_data_formatter.get_custom_trades(kwargs))
+
     def get_recent_trades(self, **kwargs):
-        return(self.param_check(spot_api.get_recent_trades, kwargs))
+        trades_data = self.param_check(spot_api.get_recent_trades, kwargs)
+        return(formatter.format_trades(trades_data))
 
     def get_historical_trades(self, **kwargs):
-        return(self.param_check(spot_api.get_historical_trades, kwargs))
+        trades_data = self.param_check(spot_api.get_historical_trades, kwargs)
+        return(formatter.format_trades(trades_data))
 
     def get_agg_trades(self, **kwargs):
         return(self.param_check(spot_api.get_agg_trades, kwargs))
