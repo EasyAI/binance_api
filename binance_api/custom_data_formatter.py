@@ -23,7 +23,8 @@ def get_custom_trades(kwargs):
     total_trades_left = kwargs['limit']
     t_id = 0
 
-    authApi = rest_master.Binance_REST(kwargs['pubKey'], kwargs['prvKey'])
+    if total_trades_left > 1000:
+        authApi = rest_master.Binance_REST(kwargs['pubKey'], kwargs['prvKey'])
 
     while True:
         if total_trades_left > 1000:

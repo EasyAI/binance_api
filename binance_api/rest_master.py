@@ -51,6 +51,7 @@ class Binance_REST:
 
     def get_custom_trades(self, **kwargs):
         if kwargs['limit'] > 1000:
+            print(self.public_key, self.private_key)
             kwargs.update({'pubKey':self.public_key, 'prvKey':self.private_key})
         return(custom_data_formatter.get_custom_trades(kwargs))
 
