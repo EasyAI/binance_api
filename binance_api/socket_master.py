@@ -23,28 +23,28 @@ class Binance_SOCK:
         '''
         Setup the connection and setup data containers and management variables for the socket.
         '''
-        self.MAX_REQUEST_ITEMS  = 10
-        self.requested_items    = {}
+        self.MAX_REQUEST_ITEMS      = 10
+        self.requested_items        = {}
 
-        self.last_data_recv_time = 0
+        self.last_data_recv_time    = 0
 
-        self.socketRunning  = False
-        self.socketBuffer   = {}
-        self.ws             = None
-        self.stream_names   = []
-        self.query          = ''
-        self.id_counter     = 0
+        self.socketRunning          = False
+        self.socketBuffer           = {}
+        self.ws                     = None
+        self.stream_names           = []
+        self.query                  = ''
+        self.id_counter             = 0
 
-        self.BASE_CANDLE_LIMIT = 850
-        self.BASE_DEPTH_LIMIT = 50
+        self.BASE_CANDLE_LIMIT      = 200
+        self.BASE_DEPTH_LIMIT       = 20
 
         ## For locally managed data.
         self.live_and_historic_data = False
-        self.candle_data        = {}
-        self.book_data          = {}
+        self.candle_data            = {}
+        self.book_data              = {}
 
-        self.userDataStream_added = False
-        self.listen_key = None
+        self.userDataStream_added   = False
+        self.listen_key             = None
 
 
     def build_query(self):
@@ -77,6 +77,24 @@ class Binance_SOCK:
         return('QUERY_CLEARED')
 
 
+    ## ------------------ [DATA_ACCESS_ENDPOINT] ------------------ ##
+    def get_live_depths(self, symbol=None):
+        return_books = {}
+        for key in self.book_data:
+            ask_Price_List = self._orderbook_sorter_algo(self.book_data[key]['a'], 'ask')
+            bid_Price_List = self._orderbook_sorter_algo(self.book_data[key]['b'], 'bid')
+            return_books.update({key:{'a':ask_Price_List, 'b':bid_Price_List}})
+
+        if symbol:
+            return(return_books[symbol])
+        return(return_books)
+
+    def get_live_candles(self, symbol=None):
+        if symbol:
+            return(self.candle_data[symbol])
+        return(self.candle_data)
+
+
     ## ------------------ [MANUAL_CALLS_EXCLUSIVE] ------------------ ##
     def subscribe_streams(self, **kwargs):
         return(self._send_message('SUBSCRIBE', **kwargs))
@@ -97,37 +115,37 @@ class Binance_SOCK:
 
     ## ------------------ [WEBSOCKET_EXCLUSIVE] ------------------ ##
     def set_aggTrade_stream(self, **kwargs):
-        return(self.param_check(websocket_api.set_aggTrade_stream, kwargs))
+        return(self._param_check(websocket_api.set_aggTrade_stream, kwargs))
 
     def set_trade_stream(self, **kwargs):
-        return(self.param_check(websocket_api.set_trade_stream, kwargs))
+        return(self._param_check(websocket_api.set_trade_stream, kwargs))
 
     def set_candle_stream(self, **kwargs):
-        return(self.param_check(websocket_api.set_candle_stream, kwargs))
+        return(self._param_check(websocket_api.set_candle_stream, kwargs))
 
     def set_miniTicker_stream(self, **kwargs):
-        return(self.param_check(websocket_api.set_miniTicker_stream, kwargs))
+        return(self._param_check(websocket_api.set_miniTicker_stream, kwargs))
 
     def set_global_miniTicker_stream(self):
-        return(self.param_check(websocket_api.set_global_miniTicker_stream))
+        return(self._param_check(websocket_api.set_global_miniTicker_stream))
 
     def set_ticker_stream(self, **kwargs):
-        return(self.param_check(websocket_api.set_ticker_stream, kwargs))
+        return(self._param_check(websocket_api.set_ticker_stream, kwargs))
 
     def set_gloal_ticker_stream(self):
-        return(self.param_check(websocket_api.set_gloal_ticker_stream))
+        return(self._param_check(websocket_api.set_gloal_ticker_stream))
 
     def set_bookTicker_stream(self, **kwargs):
-        return(self.param_check(websocket_api.set_bookTicker_stream, kwargs))
+        return(self._param_check(websocket_api.set_bookTicker_stream, kwargs))
 
     def set_global_bookTicker_stream(self):
-        return(self.param_check(websocket_api.set_global_bookTicker_stream))
+        return(self._param_check(websocket_api.set_global_bookTicker_stream))
 
     def set_partialBookDepth_stream(self, **kwargs):
-        return(self.param_check(websocket_api.set_partialBookDepth_stream, kwargs))
+        return(self._param_check(websocket_api.set_partialBookDepth_stream, kwargs))
 
     def set_manual_depth_stream(self, **kwargs):
-        return(self.param_check(websocket_api.set_manual_depth_stream, kwargs))
+        return(self._param_check(websocket_api.set_manual_depth_stream, kwargs))
 
 
     ## ------------------ [FULL_DATA_EXCLUSIVE] ------------------ ##
@@ -153,35 +171,18 @@ class Binance_SOCK:
         return(RETURN_MESSAGE)
 
 
-    def get_live_depths(self):
-        return_books = {}
-        for key in self.book_data:
-            ask_Price_List = self._orderbook_sorter_algo(self.book_data[key]['a'], 'ask')
-            bid_Price_List = self._orderbook_sorter_algo(self.book_data[key]['b'], 'bid')
-            return_books.update({key:{'a':ask_Price_List, 'b':bid_Price_List}})
-        return(return_books)
-
-    def get_live_candles(self):
-        return(self.candle_data)
-
-
     ## ------------------ [USER_DATA_STREAM_EXCLUSIVE] ------------------ ##
     def set_userDataStream(self, AUTHENTICATED_REST, user_data_stream_type, remove_stream=False):
         if remove_stream:
-            message = self.param_check(None, {'listenKey':self.listen_key, 'remove_stream':True})
+            message = self._param_check(None, {'listenKey':self.listen_key, 'remove_stream':True})
             self.listen_key = None
         else:
             if self.listen_key == None:
 
                 key_auth = AUTHENTICATED_REST.get_listenKey(user_data_stream_type)
-
-                if 'code' in key_auth:
-                    print(key_auth)
-                    return(key_auth)
-
                 listen_key = key_auth['listenKey']
 
-                message = self.param_check(None, {'listenKey':listen_key})
+                message = self._param_check(None, {'listenKey':listen_key})
                 self.listen_key = listen_key
 
                 logging.info('[SOCKET_MASTER] Starting local managing')
@@ -202,7 +203,7 @@ class Binance_SOCK:
             time.sleep(1)
 
 
-    def param_check(self, api_info, users_passed_parameters=None):
+    def _param_check(self, api_info, users_passed_parameters=None):
         if 'listenKey' not in users_passed_parameters:
             if api_info.params != None:
                 missingParameters = []

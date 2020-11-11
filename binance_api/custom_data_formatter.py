@@ -3,6 +3,7 @@
 import time
 import json
 import logging
+from datetime import datetime
 
 from . import rest_master
 
@@ -78,8 +79,6 @@ def get_custom_candles(kwargs):
         best_interval = best_interval_calc(BASE_BINANCE_HOURS, interval_number_multiplier, 24)
     elif interval_time_type == 'd':
         best_interval = best_interval_calc(BASE_BINANAE_DAYS, interval_number_multiplier, 7)
-    elif interval_time_type == 'w':
-        best_interval = best_interval_calc(BASE_BINANCE_WEEKS, interval_number_multiplier, 0)
     else:
         return('INVALIDE_TIMEFRAME')
 
@@ -121,11 +120,64 @@ def get_custom_candles(kwargs):
         c_end_time = candles[-1][0]-1
         candle_data = candle_data + candles
 
+    ## To be used to build custom timeframes
     if best_interval != kwargs['interval']:
-        for candle in candle_data:
-            pass
 
-    return(candle_data)
+        # Build the most recent candles close time into a valid timestamp.
+        cc_time=round((candle_data[0][6]/1000))
+
+        if interval_time_type == 'm':
+            current_time = time.localtime()[4]
+            split_time = int(str(datetime.fromtimestamp(cc_time))[11:].split(':')[1])
+        elif interval_time_type == 'h':
+            current_time = time.localtime()[3]
+            split_time = int(str(datetime.fromtimestamp(cc_time))[11:].split(':')[0])
+        elif interval_time_type == 'd':
+            current_time = time.localtime()[2]
+            split_time = int(str(datetime.fromtimestamp(cc_time))[:10].split('-')[2])
+
+        # How many candles required for the current candle with the new timeframe.
+        current_range = round((split_time%interval_number_multiplier)/int(best_interval[:-1]))
+
+        # This holds the amount of candles will be part of 1 with the new timeframe.
+        normal_range = round(interval_number_multiplier/int(best_interval[:-1]))
+
+        # max amount of candles for new timeframe.
+        candles_for_new_timeframe = round(len(candle_data)/normal_range)-1
+
+        # New empty list where the newly built candles will be held
+        buit_candles = []
+
+        for i in range(candles_for_new_timeframe):
+            ccstart = i*current_range
+            ccend   = (i*current_range)+current_range
+
+            otime       = candle_data[ccend-1][0]
+            copen       = candle_data[ccend-1][1]
+            chigh       = 0
+            clow        = 9999
+            cclose      = candle_data[ccstart][4]
+            cvolume     = 0
+            closetime   = candle_data[ccstart][6]
+            qavolume    = 0
+            numtrades   = 0
+
+            for x, candle in enumerate(candle_data[ccstart:ccend]):
+                chigh = candle[2] if candle[2] > chigh else chigh
+                clow = candle[3] if candle[3] < clow else clow
+                cvolume += candle[5]
+                qavolume += candle[7]
+                numtrades += candle[8]
+            
+            buit_candles.append([otime, copen, chigh, clow, cclose, cvolume, closetime, qavolume, numtrades])
+
+            current_range = normal_range
+
+        return_candles = buit_candles
+    else:
+        return_candles = candle_data
+
+    return(return_candles)
 
 
 def best_interval_calc(base_intervals, target_interval, max_time):

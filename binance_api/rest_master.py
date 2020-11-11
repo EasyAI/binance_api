@@ -51,7 +51,6 @@ class Binance_REST:
 
     def get_custom_trades(self, **kwargs):
         if kwargs['limit'] > 1000:
-            print(self.public_key, self.private_key)
             kwargs.update({'pubKey':self.public_key, 'prvKey':self.private_key})
         return(custom_data_formatter.get_custom_trades(kwargs))
 
@@ -374,6 +373,9 @@ class Binance_REST:
        	api_resp = requests.request(method, urlQuery, headers=headers)
         data = api_resp.json()
         logging.debug('[REST_MASTER] QUERY DATA {0}'.format(data))
+
+        if 'code' in data:
+            logging.warning('[BINANCE_API_ERROR][CODE: "{0}"][MESSAGE: "{1}"]'.format(data['code'], data['msg']))
 
         self.requests_made += 1
 
