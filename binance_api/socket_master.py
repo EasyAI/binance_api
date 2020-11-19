@@ -542,6 +542,9 @@ class Binance_SOCK:
 
         for price in prices_list:
             if price in books_dict_base:
-                book_depth_organised.append([price, books_dict_base[price][1]])
+                try:
+                    book_depth_organised.append([price, books_dict_base[price][1]])
+                except:
+                    pass
 
         return(book_depth_organised)
