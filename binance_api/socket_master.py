@@ -1,6 +1,7 @@
 #! /usr/bin/env python3
 
 import sys
+import copy
 import time
 import json
 import hashlib
@@ -81,8 +82,8 @@ class Binance_SOCK:
     def get_live_depths(self, symbol=None):
         return_books = {}
         for key in self.book_data:
-            ask_Price_List = self._orderbook_sorter_algo(self.book_data[key]['a'], 'ask')
-            bid_Price_List = self._orderbook_sorter_algo(self.book_data[key]['b'], 'bid')
+            ask_Price_List = self._orderbook_sorter_algo(copy.deepcopy(self.book_data[key]['a']), 'ask')
+            bid_Price_List = self._orderbook_sorter_algo(copy.deepcopy(self.book_data[key]['b']), 'bid')
             return_books.update({key:{'a':ask_Price_List, 'b':bid_Price_List}})
 
         if symbol:
@@ -476,7 +477,7 @@ class Binance_SOCK:
     def _update_candles(self, data):
         rC = data['k']
 
-        live_candle_data = formatter.format_candles(rC, 'SOCK')[:self.BASE_CANDLE_LIMIT]
+        live_candle_data = formatter.format_candles(rC, 'SOCK')
 
         if live_candle_data[0] == self.candle_data[rC['s']][0][0]:
             self.candle_data[rC['s']][0] = live_candle_data
@@ -484,6 +485,7 @@ class Binance_SOCK:
         else:
             if live_candle_data[0] > self.candle_data[rC['s']][0][0]:
                 self.candle_data[rC['s']].insert(0, live_candle_data)
+                self.candle_data[rC['s']] = self.candle_data[rC['s']][:self.BASE_CANDLE_LIMIT]
 
 
     def _update_depth(self, data):
@@ -542,9 +544,6 @@ class Binance_SOCK:
 
         for price in prices_list:
             if price in books_dict_base:
-                try:
-                    book_depth_organised.append([price, books_dict_base[price][1]])
-                except:
-                    pass
+                book_depth_organised.append([price, books_dict_base[price][1]])
 
         return(book_depth_organised)
