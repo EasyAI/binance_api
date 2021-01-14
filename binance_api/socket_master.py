@@ -43,6 +43,7 @@ class Binance_SOCK:
         self.live_and_historic_data = False
         self.candle_data            = {}
         self.book_data              = {}
+        self.reading_books          = False
 
         self.userDataStream_added   = False
         self.listen_key             = None
@@ -80,14 +81,27 @@ class Binance_SOCK:
 
     ## ------------------ [DATA_ACCESS_ENDPOINT] ------------------ ##
     def get_live_depths(self, symbol=None):
+        got_books = False
         return_books = {}
-        for key in self.book_data:
-            ask_Price_List = self._orderbook_sorter_algo(copy.deepcopy(self.book_data[key]['a']), 'ask')
-            bid_Price_List = self._orderbook_sorter_algo(copy.deepcopy(self.book_data[key]['b']), 'bid')
-            return_books.update({key:{'a':ask_Price_List, 'b':bid_Price_List}})
+
+        while not(got_books):
+            got_books = True
+            for key in self.book_data:
+                try:
+                    ask_Price_List = self._orderbook_sorter_algo(copy.deepcopy(self.book_data[key]['a']), 'ask')
+                    bid_Price_List = self._orderbook_sorter_algo(copy.deepcopy(self.book_data[key]['b']), 'bid')
+                    return_books.update({key:{'a':ask_Price_List, 'b':bid_Price_List}})
+                except RuntimeError as error:
+                    if error == 'dictionary changed size during iteration':
+                        print('dodged book error')
+                    got_books = False
+                    break
 
         if symbol:
+            if not symbol in return_books:
+                print(return_books)
             return(return_books[symbol])
+
         return(return_books)
 
     def get_live_candles(self, symbol=None):
