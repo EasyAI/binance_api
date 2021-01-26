@@ -92,7 +92,27 @@ def get_custom_candles(kwargs):
 
     best_interval = '{0}{1}'.format(best_interval, interval_time_type)
 
+    total_sets_done = 0
+    total_sets = total_candles_left/1000
+
+    print('Total 1k sets: {0}'.format(total_sets))
+
     while True:
+
+        total_left_Time = (total_sets-total_sets_done)*1.2
+
+        if total_left_Time > 60:
+            time_min, time_sec = str(total_left_Time/60).split('.')
+
+            time_sec = (int(time_sec[:2])/100)*60
+
+            f_total_time = '{0}.{1:.0f}m'.format(int(time_min), time_sec)
+        else:
+            f_total_time = '{0}s'.format(int(total_left_Time))
+
+
+        print('Candle sets: {0}/{1}, ETA: {2}'.format(total_sets_done, total_sets, f_total_time))
+
         if total_candles_left > 1000:
             total_candles_left -= 1000
             c_limit = 1000
@@ -103,6 +123,8 @@ def get_custom_candles(kwargs):
             else:
                 c_limit = total_candles_left
                 total_candles_left = 0
+
+        total_sets_done += c_limit/1000
 
         if c_end_time == 0:
             candles = rest_master.Binance_REST().get_candles(
