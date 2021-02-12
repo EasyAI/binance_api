@@ -15,6 +15,7 @@ from . import custom_data_formatter
 from . import spot_api
 from . import wapi_api
 from . import margin_api
+from . import futures_api
 from . import userDataStream_api
 
 
@@ -106,6 +107,76 @@ class Binance_REST:
 
     def get_open_oco_orders(self):
         return(self.param_check(spot_api.get_open_oco_orders))
+
+    ## ------------------ [FUTURES_EXCLUSIVE] ------------------ ##
+    def futures_transfer(self, **kwargs):
+        return(self.param_check(futures_api.futures_transfer))
+
+    def get_futures_transactions(self, **kwargs):
+        return(self.param_check(futures_api.get_futures_transactions))
+
+    def borrow_crossCollat(self, **kwargs):
+        return(self.param_check(futures_api.borrow_crossCollat))
+
+    def get_crossCollat_borrowHist(self, **kwargs):
+        return(self.param_check(futures_api.get_crossCollat_borrowHist))
+
+    def repay_crossCollat(self, **kwargs):
+        return(self.param_check(futures_api.repay_crossCollat))
+
+    def get_crossCollat_repayHist(self, **kwargs):
+        return(self.param_check(futures_api.get_crossCollat_repayHist))
+
+    def get_crossCollat_wallet(self):
+        return(self.param_check(futures_api.get_crossCollat_wallet))
+
+    def get_crossCollat_wallet_v2(self):
+        return(self.param_check(futures_api.get_crossCollat_wallet_v2))
+
+    def get_crossCollat_info(self, **kwargs):
+        return(self.param_check(futures_api.get_crossCollat_info))
+
+    def get_crossCollat_info_v2(self, **kwargs):
+        return(self.param_check(futures_api.get_crossCollat_info_v2))
+
+    def get_crossCollat_rate_LTV(self, **kwargs):
+        return(self.param_check(futures_api.get_crossCollat_rate_LTV))
+
+    def get_crossCollat_rate_LTV_v2(self, **kwargs):
+        return(self.param_check(futures_api.get_crossCollat_rate_LTV_v2))
+
+    def get_crossCollat_max_LTV(self, **kwargs):
+        return(self.param_check(futures_api.get_crossCollat_max_LTV))
+
+    def get_crossCollat_max_LTV_v2(self, **kwargs):
+        return(self.param_check(futures_api.get_crossCollat_max_LTV_v2))
+
+    def adjust_crossCollat_LTV(self, **kwargs):
+        return(self.param_check(futures_api.adjust_crossCollat_LTV))
+
+    def adjust_crossCollat_LTV_v2(self, **kwargs):
+        return(self.param_check(futures_api.adjust_crossCollat_LTV_v2))
+
+    def adjust_crossCollat_LTV_history(self, **kwargs):
+        return(self.param_check(futures_api.adjust_crossCollat_LTV_history))
+
+    def adjust_crossCollat_liquidation_history(self, **kwargs):
+        return(self.param_check(futures_api.adjust_crossCollat_liquidation_history))
+
+    def get_collatRepay_limit(self, **kwargs):
+        return(self.param_check(futures_api.get_collatRepay_limit))
+
+    def get_collatRepay_quote(self, **kwargs):
+        return(self.param_check(futures_api.get_collatRepay_quote))
+
+    def collateral_repay(self, **kwargs):
+        return(self.param_check(futures_api.collateral_repay))
+
+    def get_collatRepay_result(self, **kwargs):
+        return(self.param_check(futures_api.get_collatRepay_result))
+
+    def get_crossCollat_interestHist(self, **kwargs):
+        return(self.param_check(futures_api.get_crossCollat_interestHist))
 
 
     ## ------------------ [WAPI_EXCLUSIVE] ------------------ ##
