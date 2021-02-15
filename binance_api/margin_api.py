@@ -4,7 +4,7 @@ https://binance-docs.github.io/apidocs/spot/en/#margin-account-trade
 '''
 
 # Cross Margin Account Transfer:
-class place_order:
+class margin_transfer:
     params = {'R':['asset', 'amount', 'type']}
     method = 'POST'
     endpoint = '/sapi/v1/margin/transfer'
@@ -12,7 +12,7 @@ class place_order:
 
 
 # Margin Account Borrow:
-class place_order:
+class margin_accountBorrow:
     params = {'R':['asset', 'amount'],
             'O':['isIsolated', 'symbol']}
     method = 'POST'
@@ -21,7 +21,7 @@ class place_order:
 
 
 # Margin Account Repay:
-class place_order:
+class margin_accountRepay:
     params = {'R':['asset', 'amount'],
             'O':['isIsolated', 'symbol']}
     method = 'POST'
@@ -30,7 +30,7 @@ class place_order:
 
 
 # Query Margin Asset:
-class place_order:
+class query_margin_asset:
     params = {'R':['asset']}
     method = 'GET'
     endpoint = '/sapi/v1/margin/asset'
@@ -38,14 +38,14 @@ class place_order:
 
 
 # Query Cross Margin Pair:
-class place_order:
+class query_crossPair:
     params = {'R':['symbol']}
     method = 'GET'
     endpoint = '/sapi/v1/margin/pair'
     security_type = 'MARKET_DATA'
 
 # Get All Margin Assets:
-class place_order:
+class get_margin_allAssets:
     params = None
     method = 'GET'
     endpoint = '/sapi/v1/margin/allAssets'
@@ -53,7 +53,7 @@ class place_order:
 
 
 # Get All Cross Margin Pairs:
-class place_order:
+class get_allCrossPairs:
     params = None
     method = 'GET'
     endpoint = '/sapi/v1/margin/allPairs'
@@ -61,7 +61,7 @@ class place_order:
 
 
 # Query Margin PriceIndex:
-class place_order:
+class query_margin_priceIndex:
     params = {'R':['symbol']}
     method = 'GET'
     endpoint = '/sapi/v1/margin/priceIndex'
@@ -78,7 +78,7 @@ class place_order:
 
 
 # Margin Account Cancel Order:
-class place_order:
+class cancel_order:
     params = {'R':['symbol'],
             'O':['isIsolated', 'orderId', 'origClientOrderId', 'newClientOrderId']}
     method = 'DELETE'
@@ -87,7 +87,7 @@ class place_order:
 
 
 # Margin Account Cancel all Open Orders on a Symbol:
-class place_order:
+class cancel_all_orders:
     params = {'R':['symbol'],
             'O':['isIsolated']}
     method = 'DELETE'
@@ -96,7 +96,7 @@ class place_order:
 
 
 # Get Cross Margin Transfer History:
-class place_order:
+class get_margin_crossTransferHistory:
     params = {'O':['asset', 'type', 'startTime', 'endTime', 'current', 'size', 'archived']}
     method = 'GET'
     endpoint = '/sapi/v1/margin/transfer'
@@ -104,7 +104,7 @@ class place_order:
 
 
 # Query Loan Record:
-class place_order:
+class get_loanRecord:
     params = {'R':['asset'],
             'O':['isolatedSymbol', 'txId', 'startTime', 'endTime', 'current', 'size', 'archived']}
     method = 'GET'
@@ -113,7 +113,7 @@ class place_order:
 
 
 # Query Repay Record:
-class place_order:
+class get_repayRecord:
     params = {'R':['asset'],
             'O':['isolatedSymbol', 'txId', 'startTime', 'endTime', 'current', 'size', 'archived']}
     method = 'GET'
@@ -122,7 +122,7 @@ class place_order:
 
 
 # Get Interest History:
-class place_order:
+class get_interestHistory:
     params = {'O':['asset', 'isolatedSymbol', 'startTime', 'endTime', 'current', 'size', 'archived']}
     method = 'GET'
     endpoint = '/sapi/v1/margin/interestHistory'
@@ -130,7 +130,7 @@ class place_order:
 
 
 # Get Force Liquidation Record:
-class place_order:
+class get_fLiquidationRecord:
     params = {'O':['startTime', 'endTime', 'isolatedSymbol', 'current', 'size']}
     method = 'GET'
     endpoint = '/sapi/v1/margin/forceLiquidationRec'
@@ -138,7 +138,7 @@ class place_order:
 
 
 # Query Cross Margin Account Details:
-class place_order:
+class get_cross_accountDetails:
     params = None
     method = 'GET'
     endpoint = '/sapi/v1/margin/account'
@@ -146,7 +146,7 @@ class place_order:
 
 
 # Query Margin Account's Order:
-class place_order:
+class get_orders:
     params = {'R':['symbol'],
             'O':['isIsolated', 'orderId', 'origClientOrderId']}
     method = 'GET'
@@ -155,7 +155,7 @@ class place_order:
 
 
 # Query Margin Account's Open Orders:
-class place_order:
+class get_open_orders:
     params = {'O':['symbol', 'isIsolated']}
     method = 'GET'
     endpoint = '/sapi/v1/margin/openOrders'
@@ -163,7 +163,7 @@ class place_order:
 
 
 # Query Margin Account's All Orders:
-class place_order:
+class get_all_orders:
     params = {'R':['symbol'],
             'O':['isIsolated', 'orderId', 'startTime', 'endTime', 'limit']}
     method = 'GET'
@@ -172,7 +172,7 @@ class place_order:
 
 
 # Query Margin Account's Trade List:
-class place_order:
+class get_all_trades:
     params = {'R':['symbol'],
             'O':['isIsolated', 'startTime', 'endTime', 'fromId', 'limit']}
     method = 'GET'
@@ -181,7 +181,7 @@ class place_order:
 
 
 # Query Max Borrow:
-class place_order:
+class get_maxBorrow:
     params = {'R':['asset'],
             'O':['isolatedSymbol']}
     method = 'GET'
@@ -190,7 +190,7 @@ class place_order:
 
 
 # Query Max Transfer-Out Amount:
-class place_order:
+class get_maxOutAmmount:
     params = {'R':['asset'],
             'O':['isolatedSymbol']}
     method = 'GET'
@@ -199,7 +199,7 @@ class place_order:
 
 
 # Create Isolated Margin Account:
-class place_order:
+class create_isolatedMaringAccount:
     params = {'R':['base', 'quote']}
     method = 'POST'
     endpoint = '/sapi/v1/margin/isolated/create'
@@ -207,7 +207,7 @@ class place_order:
 
 
 # Isolated Margin Account Transfer:
-class place_order:
+class isolated_transfer:
     params = {'R':['asset', 'symbol', 'transFrom', 'transTo', 'amount']}
     method = 'POST'
     endpoint = '/sapi/v1/margin/isolated/transfer'
@@ -215,7 +215,7 @@ class place_order:
 
 
 # Get Isolated Margin Transfer History:
-class place_order:
+class get_isolated_transferHistory:
     params = {'R':['symbol'],
             'O':['asset', 'symbol', 'transFrom', 'transTo', 'startTime', 'endTime', 'current', 'size']}
     method = 'GET'
@@ -224,7 +224,7 @@ class place_order:
 
 
 # Query Isolated Margin Account Info
-class place_order:
+class get_isolated_accountInfo:
     params = {'O':['symbols']}
     method = 'GET'
     endpoint = '/sapi/v1/margin/isolated/account'
@@ -232,7 +232,7 @@ class place_order:
 
 
 # Query Isolated Margin Symbol:
-class place_order:
+class get_isolated_symbol:
     params = {'R':['symbol'],
     'O':['price']}
     method = 'GET'
@@ -241,7 +241,7 @@ class place_order:
 
 
 # Get All Isolated Margin Symbol:
-class place_order:
+class get_isolated_symbol_all:
     params = None
     method = 'GET'
     endpoint = '/sapi/v1/margin/isolated/allPairs'
@@ -249,7 +249,7 @@ class place_order:
 
 
 # Toggle BNB Burn On Spot Trade And Margin Interest:
-class place_order:
+class toggle_BNB_burn_ST_MI:
     params = {'O':['spotBNBBurn', 'interestBNBBurn']}
     method = 'POST'
     endpoint = '/sapi/v1/bnbBurn'
@@ -257,7 +257,7 @@ class place_order:
 
 
 # Get BNB Burn Status:
-class place_order:
+class get_BNB_burn_status:
     params = None
     method = 'GET'
     endpoint = '/sapi/v1/bnbBurn'

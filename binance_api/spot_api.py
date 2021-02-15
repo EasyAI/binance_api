@@ -4,7 +4,7 @@ https://binance-docs.github.io/apidocs/spot/en/#spot-account-trade
 '''
 
 # Test New Order:
-class get_exchange_info:
+class place_order_test:
     params = {'R':['symbol', 'side', 'type'], 
             'O':['timeInForce', 'quantity', 'quoteOrderQty', 'price', 'newClientOrderId', 'stopPrice', 'icebergQty', 'newOrderRespType']}
     method = 'POST'
@@ -13,7 +13,7 @@ class get_exchange_info:
 
 
 # New Order:
-class get_exchange_info:
+class place_order:
     params = {'R':['symbol', 'side', 'type'], 
             'O':['timeInForce', 'quantity', 'quoteOrderQty', 'price', 'newClientOrderId', 'stopPrice', 'icebergQty', 'newOrderRespType']}
     method = 'POST'
@@ -22,7 +22,7 @@ class get_exchange_info:
 
 
 # Cancel Order:
-class get_exchange_info:
+class cancel_order:
     params = {'R':['symbol'], 
             'O':['orderId', 'origClientOrderId', 'newClientOrderId']}
     method = 'DELETE'
@@ -31,7 +31,7 @@ class get_exchange_info:
 
 
 # Cancel all Open Orders on a Symbol:
-class get_exchange_info:
+class cancel_all_orders:
     params = {'R':['symbol']}
     method = 'DELETE'
     endpoint = '/api/v3/openOrders'
@@ -39,7 +39,7 @@ class get_exchange_info:
 
 
 # Query Order:
-class get_exchange_info:
+class query_order:
     params = {'R':['symbol'], 
             'O':['orderId', 'origClientOrderId']}
     method = 'GET'
@@ -48,7 +48,7 @@ class get_exchange_info:
 
 
 # Current Open Orders:
-class get_exchange_info:
+class get_openOrders:
     params = {'R':['symbol']}
     method = 'GET'
     endpoint = '/api/v3/openOrders'
@@ -56,7 +56,7 @@ class get_exchange_info:
 
 
 # All Orders:
-class get_exchange_info:
+class get_allOrders:
     params = {'R':['symbol'], 
             'O':['orderId', 'startTime', 'endTime', 'limit']}
     method = 'GET'
@@ -65,7 +65,7 @@ class get_exchange_info:
 
 
 # New OCO:
-class get_exchange_info:
+class place_order_oco:
     params = {'R':['symbol', 'side', 'quantity', 'price', 'stopPrice'], 
             'O':['listClientOrderId', 'limitClientOrderId', 'limitIcebergQty', 'stopClientOrderId', 'stopLimitPrice', 'stopIcebergQty', 'stopLimitTimeInForce', 'newOrderRespType']}
     method = 'POST'
@@ -74,7 +74,7 @@ class get_exchange_info:
 
 
 # Cancel OCO:
-class get_exchange_info:
+class cancel_order_oco:
     params = {'R':['symbol'], 
             'O':['orderListId', 'listClientOrderId', 'newClientOrderId']}
     method = 'DELETE'
@@ -83,7 +83,7 @@ class get_exchange_info:
 
 
 # Query OCO:
-class get_exchange_info:
+class query_order_oco:
     params = {'O':['orderListId', 'origClientOrderId']}
     method = 'GET'
     endpoint = '/api/v3/orderList'
@@ -91,7 +91,7 @@ class get_exchange_info:
 
 
 # Query all OCO:
-class get_exchange_info:
+class get_allOrders_oco:
     params = {'O':['fromId', 'startTime', 'endTime', 'limit']}
     method = 'GET'
     endpoint = '/api/v3/allOrderList'
@@ -99,7 +99,7 @@ class get_exchange_info:
 
 
 # Query Open OCO:
-class get_exchange_info:
+class get_openOrders_oco:
     params = None
     method = 'GET'
     endpoint = '/api/v3/openOrderList'
@@ -107,7 +107,7 @@ class get_exchange_info:
 
 
 # Account Information:
-class get_exchange_info:
+class get_accountInfo:
     params = None
     method = 'GET'
     endpoint = '/api/v3/account'
@@ -115,7 +115,7 @@ class get_exchange_info:
 
 
 # Account Trade List:
-class get_exchange_info:
+class get_tradeList:
     params = {'R':['symbol'], 
             'O':['startTime', 'endTime', 'fromId', 'limit']}
     method = 'GET'

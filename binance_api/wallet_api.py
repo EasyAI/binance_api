@@ -4,7 +4,7 @@ https://binance-docs.github.io/apidocs/spot/en/#wallet-endpoints
 '''
 
 # System Status:
-class make_withdraw:
+class get_systemStatus:
     params = None
     method = 'GET'
     endpoint = '/wapi/v3/systemStatus.html'
@@ -12,7 +12,7 @@ class make_withdraw:
 
 
 # All Coins' Information:
-class make_withdraw:
+class get_allCoinsInfo:
     params = None
     method = 'GET'
     endpoint = '/sapi/v1/capital/config/getall'
@@ -20,7 +20,7 @@ class make_withdraw:
 
 
 #Daily Account Snapshot:
-class make_withdraw:
+class get_dailySnapshot:
     params = {'R':['type'],
             'O':['startTime', 'endTime', 'limit']}
     method = 'GET'
@@ -29,7 +29,7 @@ class make_withdraw:
 
 
 # Disable Fast Withdraw Switch:
-class make_withdraw:
+class disable_withdrawSwitch:
     params = None
     method = 'POST'
     endpoint = '/sapi/v1/account/disableFastWithdrawSwitch'
@@ -37,7 +37,7 @@ class make_withdraw:
 
 
 # Enable Fast Withdraw Switch:
-class make_withdraw:
+class enable_withdrawSwitch:
     params = None
     method = 'POST'
     endpoint = '/sapi/v1/account/enableFastWithdrawSwitch'
@@ -45,7 +45,7 @@ class make_withdraw:
 
 
 # Withdraw [SAPI]:
-class make_withdraw:
+class make_withdraw_SAPI:
     params = {'R':['coin', 'address', 'amount'],
             'O':['withdrawOrderId', 'network', 'addressTag', 'transactionFeeFlag', 'name']}
     method = 'POST'
@@ -63,7 +63,7 @@ class make_withdraw:
 
 
 # Deposit History(supporting network):
-class make_withdraw:
+class get_depositHistory_SN:
     params = {'O':['coin', 'status', 'startTime', 'endTime', 'offest', 'limit']}
     method = 'GET'
     endpoint = '/sapi/v1/capital/deposit/hisrec'
@@ -71,7 +71,7 @@ class make_withdraw:
 
 
 # Deposit History:
-class make_withdraw:
+class get_depositHistory:
     params = {'O':['asset', 'status', 'startTime', 'endTime']}
     method = 'GET'
     endpoint = '/wapi/v3/depositHistory.html'
@@ -79,7 +79,7 @@ class make_withdraw:
 
 
 # Withdraw History (supporting network):
-class make_withdraw:
+class get_withdrawHistory_SN:
     params = {'O':['coin', 'status', 'offset', 'limit', 'startTime', 'endTime']}
     method = 'GET'
     endpoint = '/sapi/v1/capital/withdraw/history'
@@ -87,7 +87,7 @@ class make_withdraw:
 
 
 # Withdraw History:
-class make_withdraw:
+class get_withdrawHistory:
     params = {'O':['asset', 'status', 'startTime', 'endTime']}
     method = 'GET'
     endpoint = '/wapi/v3/withdrawHistory.html'
@@ -95,7 +95,7 @@ class make_withdraw:
 
 
 # Deposit Address (supporting network):
-class make_withdraw:
+class depositAddress_SN:
     params = {'R':['coin'],
             'O':['network']}
     method = 'GET'
@@ -104,7 +104,7 @@ class make_withdraw:
 
 
 # Deposit Address:
-class make_withdraw:
+class depositAddress:
     params = {'R':['asset'],
             'O':['status']}
     method = 'GET'
@@ -113,7 +113,7 @@ class make_withdraw:
 
 
 # Account Status:
-class make_withdraw:
+class get_accountStatus:
     params = None
     method = 'GET'
     endpoint = '/wapi/v3/accountStatus.html'
@@ -121,7 +121,7 @@ class make_withdraw:
 
 
 # Account API Trading Status:
-class make_withdraw:
+class get_apiStatus:
     params = None
     method = 'GET'
     endpoint = '/wapi/v3/apiTradingStatus.html'
@@ -129,7 +129,7 @@ class make_withdraw:
 
 
 # DustLog:
-class make_withdraw:
+class get_dustLog:
     params = None
     method = 'GET'
     endpoint = '/wapi/v3/userAssetDribbletLog.html'
@@ -137,7 +137,7 @@ class make_withdraw:
 
 
 # Dust Transfer:
-class make_withdraw:
+class make_dustTransfer:
     params = {'R':['asset']}
     method = 'POST'
     endpoint = '/sapi/v1/asset/dust'
@@ -145,7 +145,7 @@ class make_withdraw:
 
 
 # Asset Dividend Record:
-class make_withdraw:
+class get_dividendRecord:
     params = {'O':['asset', 'startTime', 'endTime', 'limit']}
     method = 'GET'
     endpoint = '/sapi/v1/asset/assetDividend'
@@ -153,7 +153,7 @@ class make_withdraw:
 
 
 # Asset Detail:
-class make_withdraw:
+class get_assetDetail:
     params = None
     method = 'GET'
     endpoint = '/wapi/v3/assetDetail.html'
@@ -161,7 +161,7 @@ class make_withdraw:
 
 
 # Trade Fee:
-class make_withdraw:
+class get_tradeFee:
     params = {'O':['symbol']}
     method = 'GET'
     endpoint = '/wapi/v3/tradeFee.html'
@@ -169,7 +169,7 @@ class make_withdraw:
 
 
 # User Universal Transfer:
-class make_withdraw:
+class make_universalTransfer:
     params = {'R':['type', 'asset', 'amount']}
     method = 'POST'
     endpoint = '/sapi/v1/asset/transfer'
@@ -177,7 +177,7 @@ class make_withdraw:
 
 
 # Query User Universal Transfer History
-class make_withdraw:
+class get_universalTransferHistory:
     params = {'R':['type'],
         'O':['startTime', 'endTime', 'current', 'size']}
     method = 'GET'

@@ -4,7 +4,7 @@ https://binance-docs.github.io/apidocs/spot/en/#sub-account-endpoints
 '''
 
 # Query Sub-account List (For Master Account):
-class get_minerList:
+class get_subAccount_list:
     params = {'O':['email', 'status', 'page', 'limit']}
     method = 'GET'
     endpoint = '/wapi/v3/sub-account/list.html'
@@ -12,7 +12,7 @@ class get_minerList:
 
 
 # Query Sub-account Spot Asset Transfer History (For Master Account):
-class get_minerList:
+class get_subAccount_spotTransferHistory_wapi:
     params = {'R':['email'],
             'O':['startTime', 'endTime', 'page', 'limit']}
     method = 'GET'
@@ -21,7 +21,7 @@ class get_minerList:
 
 
 # Query Sub-account Spot Asset Transfer History (SAPI For Master Account):
-class get_minerList:
+class get_subAccount_spotTransferHistory_sapi:
     params = {'O':['fromEmail', 'toEmail', 'startTime', 'endTime', 'page', 'limit']}
     method = 'GET'
     endpoint = '/sapi/v1/sub-account/sub/transfer/history'
@@ -29,15 +29,15 @@ class get_minerList:
 
 
 # Sub-account Spot Asset Transfer (For Master Account):
-class get_minerList:
+class subAccount_spotAsset_transfer:
     params = {'R':['fromEmail', 'toEmail', 'asset', 'amount']}
-    method = 'GET'
+    method = 'POST'
     endpoint = '/wapi/v3/sub-account/transfer.html'
     security_type = 'NONE'
 
 
 # Query Sub-account Futures Asset Transfer History (For Master Account):
-class get_minerList:
+class get_subAccount_futuresTransferHistory:
     params = {'R':['email', 'futuresType'],
             'O':['startTime', 'endTime', 'page', 'limit']}
     method = 'GET'
@@ -46,7 +46,7 @@ class get_minerList:
 
 
 # Sub-account Futures Asset Transfer (For Master Account):
-class get_minerList:
+class subAccount_futuresAsset_transfer:
     params = {'R':['fromEmail', 'toEmail', 'futuresType', 'asset', 'amount']}
     method = 'POST'
     endpoint = '/sapi/v1/sub-account/futures/internalTransfer'
@@ -54,7 +54,7 @@ class get_minerList:
 
 
 # Query Sub-account Assets (For Master Account):
-class get_minerList:
+class get_subAccount_assets:
     params = {'R':['email']}
     method = 'GET'
     endpoint = '/wapi/v3/sub-account/assets.html'
@@ -62,7 +62,7 @@ class get_minerList:
 
 
 # Query Sub-account Spot Assets Summary (For Master Account):
-class get_minerList:
+class get_subAccount_spotAssetsSummary:
     params = {'O':['email', 'page', 'size']}
     method = 'GET'
     endpoint = '/sapi/v1/sub-account/spotSummary'
@@ -70,7 +70,7 @@ class get_minerList:
 
 
 # Get Sub-account Deposit Address (For Master Account):
-class get_minerList:
+class get_subAccount_depositAddress:
     params = {'R':['email', 'coin'],
             'O':['network']}
     method = 'GET'
@@ -79,7 +79,7 @@ class get_minerList:
 
 
 # Get Sub-account Deposit History (For Master Account):
-class get_minerList:
+class get_subAccount_depositHistory:
     params = {'R':['email'],
             'O':['coin', 'status', 'startTime', 'endTime', 'limit', 'offset']}
     method = 'GET'
@@ -88,7 +88,7 @@ class get_minerList:
 
 
 # Get Sub-account's Status on Margin/Futures (For Master Account):
-class get_minerList:
+class get_subAccount_statusFnM:
     params = {'O':['email']}
     method = 'GET'
     endpoint = '/sapi/v1/sub-account/status'
@@ -96,7 +96,7 @@ class get_minerList:
 
 
 # Enable Margin for Sub-account (For Master Account):
-class get_minerList:
+class enable_subAccount_margin:
     params = {'R':['email']}
     method = 'POST'
     endpoint = '/sapi/v1/sub-account/margin/enable'
@@ -104,7 +104,7 @@ class get_minerList:
 
 
 # Get Detail on Sub-account's Margin Account (For Master Account):
-class get_minerList:
+class get_subAccount_marginAccount:
     params = {'R':['email']}
     method = 'GET'
     endpoint = '/sapi/v1/sub-account/margin/account'
@@ -112,7 +112,7 @@ class get_minerList:
 
 
 # Get Summary of Sub-account's Margin Account (For Master Account):
-class get_minerList:
+class get_subAccount_marginAccountSummary:
     params = None
     method = 'GET'
     endpoint = '/sapi/v1/sub-account/margin/accountSummary'
@@ -120,7 +120,7 @@ class get_minerList:
 
 
 # Enable Futures for Sub-account (For Master Account):
-class get_minerList:
+class enable_subAccount_futures:
     params = {'R':['email']}
     method = 'POST'
     endpoint = '/sapi/v1/sub-account/futures/enable'
@@ -128,7 +128,7 @@ class get_minerList:
 
 
 # Get Detail on Sub-account's Futures Account (For Master Account):
-class get_minerList:
+class get_subAccount_futuresAccount:
     params = {'R':['email']}
     method = 'GET'
     endpoint = '/sapi/v1/sub-account/futures/account'
@@ -136,7 +136,7 @@ class get_minerList:
 
 
 # Get Summary of Sub-account's Futures Account (For Master Account):
-class get_minerList:
+class get_subAccount_futuresAccountSummary:
     params = None
     method = 'GET'
     endpoint = '/sapi/v1/sub-account/futures/accountSummary'
@@ -144,7 +144,7 @@ class get_minerList:
 
 
 # Get Futures Position-Risk of Sub-account (For Master Account)
-class get_minerList:
+class get_subAccount_positionRisk:
     params = {'R':['email']}
     method = 'GET'
     endpoint = '/sapi/v1/sub-account/futures/positionRisk'
@@ -152,7 +152,7 @@ class get_minerList:
 
 
 # Futures Transfer for Sub-account (For Master Account):
-class get_minerList:
+class subAccount_futures_transfer:
     params = {'R':['email', 'asset']}
     method = 'POST'
     endpoint = '/sapi/v1/sub-account/futures/transfer'
@@ -160,7 +160,7 @@ class get_minerList:
 
 
 # Margin Transfer for Sub-account (For Master Account):
-class get_minerList:
+class subAccount_margin_transfer:
     params = {'R':['email', 'asset', 'amount', 'type']}
     method = 'POST'
     endpoint = '/sapi/v1/sub-account/margin/transfer'
@@ -168,7 +168,7 @@ class get_minerList:
 
 
 # Transfer to Sub-account of Same Master (For Sub-account):
-class get_minerList:
+class master_sub_transfer:
     params = {'R':['toEmail', 'asset', 'amount']}
     method = 'POST'
     endpoint = '/sapi/v1/sub-account/transfer/subToSub'
@@ -176,7 +176,7 @@ class get_minerList:
 
 
 # Transfer to Master (For Sub-account):
-class get_minerList:
+class sub_master_transfer:
     params = {'R':['asset', 'amount']}
     method = 'POST'
     endpoint = '/sapi/v1/sub-account/transfer/subToMaster'
@@ -184,7 +184,7 @@ class get_minerList:
 
 
 # Sub-account Transfer History (For Sub-account)
-class get_minerList:
+class get_subAccount_transferHistory:
     params = {'O':['asset', 'type', 'startTime', 'endTime', 'limit']}
     method = 'GET'
     endpoint = '/sapi/v1/sub-account/transfer/subUserHistory'
@@ -192,7 +192,7 @@ class get_minerList:
 
 
 # Universal Transfer (For Master Account):
-class get_minerList:
+class make_universalTransfer:
     params = {'R':['fromAccountType', 'toAccountType', 'asset', 'amount'],
             'O':['toEmail', 'fromEmail']}
     method = 'POST'
@@ -201,7 +201,7 @@ class get_minerList:
 
 
 # Query Universal Transfer History:
-class get_minerList:
+class get_universalTransferHisotry:
     params = {'O':['fromEmail', 'toEmail', 'startTime', 'endTime', 'page', 'limit']}
     method = 'GET'
     endpoint = '/sapi/v1/sub-account/universalTransfer'
@@ -209,7 +209,7 @@ class get_minerList:
 
 
 # Get Detail on Sub-account's Futures Account V2 (For Master Account):
-class get_minerList:
+class get_subAccount_futuresAccount_v2:
     params = {'R':['email', 'futuresType']}
     method = 'GET'
     endpoint = '/sapi/v2/sub-account/futures/account'
@@ -217,7 +217,7 @@ class get_minerList:
 
 
 # Get Summary of Sub-account's Futures Account V2 (For Master Account):
-class get_minerList:
+class get_subAccount_futuresAccountSummary_v2:
     params = {'R':['futuresType'],
             'O':['page', 'type']}
     method = 'GET'
@@ -226,7 +226,7 @@ class get_minerList:
 
 
 # Get Futures Position-Risk of Sub-account V2 (For Master Account):
-class get_minerList:
+class get_subAccount_positionRisk_v2:
     params = {'R':['email', 'futuresType']}
     method = 'GET'
     endpoint = '/sapi/v2/sub-account/futures/positionRisk'
