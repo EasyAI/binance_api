@@ -12,11 +12,17 @@ from . import formatter
 from . import custom_data_formatter
 
 ## API Object imports
-from . import spot_api
-from . import wapi_api
-from . import margin_api
+from . import blvt_api
+from . import bswap_api
 from . import futures_api
+from . import margin_api
+from . import marketData_api
+from . import mining_api
+from . import savings_api
+from . import spot_api
+from . import subAccount_api
 from . import userDataStream_api
+from . import wallet_api
 
 
 ## sets up the rest BASE for binances rest API.
@@ -107,6 +113,7 @@ class Binance_REST:
 
     def get_open_oco_orders(self):
         return(self.param_check(spot_api.get_open_oco_orders))
+
 
     ## ------------------ [FUTURES_EXCLUSIVE] ------------------ ##
     def futures_transfer(self, **kwargs):

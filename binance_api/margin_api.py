@@ -1,161 +1,265 @@
+'''
+Endpoints are collected from the Margin Endpoints api section under the official binance api docs:
+https://binance-docs.github.io/apidocs/spot/en/#margin-account-trade
+'''
 
-class transfer_to_margin:
+# Cross Margin Account Transfer:
+class place_order:
     params = {'R':['asset', 'amount', 'type']}
     method = 'POST'
     endpoint = '/sapi/v1/margin/transfer'
     security_type = 'MARGIN'
 
 
-class apply_for_loan:
-    params = {'R':['asset', 'amount']}
-    method = 'POST'
-    endpoint = '/sapi/v1/margin/loan'
-    security_type = 'MARGIN'
-
-
-class repay_loan:
-    params = {'R':['asset', 'amount']}
-    method = 'POST'
-    endpoint = '/sapi/v1/margin/repay'
-    security_type = 'MARGIN'
-
-
+# Margin Account Borrow:
 class place_order:
-    params = {'R':['symbol', 'side', 'type', 'quantity'],
-    'O':['price', 'stopPrice', 'newClientOrderId', 'icebergQty', 'newOrderRespType', 'timeInForce']}
+    params = {'R':['asset', 'amount'],
+            'O':['isIsolated', 'symbol']}
     method = 'POST'
-    endpoint = '/sapi/v1/margin/order'
-    security_type = 'TRADE'
-
-
-class cancel_order:
-    params = {'R':['symbol'],
-    'O':['orderId', 'origClientOrderId', 'newClientOrderId']}
-    method = 'DELETE'
-    endpoint = '/sapi/v1/margin/order'
-    security_type = 'TRADE'
-
-
-class get_loan_record:
-    params = {'R':['asset'],
-    'O':['txId', 'startTime', 'endTime', 'current', 'size']}
-    method = 'GET'
     endpoint = '/sapi/v1/margin/loan'
-    security_type = 'USER_DATA'
+    security_type = 'MARGIN'
 
 
-class get_repayed_record:
-    params = {'R':['asset'],
-    'O':['txId', 'startTime', 'endTime', 'current', 'size']}
-    method = 'GET'
+# Margin Account Repay:
+class place_order:
+    params = {'R':['asset', 'amount'],
+            'O':['isIsolated', 'symbol']}
+    method = 'POST'
     endpoint = '/sapi/v1/margin/repay'
-    security_type = 'USER_DATA'
+    security_type = 'MARGIN'
 
 
-class get_account:
-    params = None
-    method = 'GET'
-    endpoint = '/sapi/v1/margin/account'
-    security_type = 'USER_DATA'
-
-
-class get_asset:
+# Query Margin Asset:
+class place_order:
     params = {'R':['asset']}
     method = 'GET'
     endpoint = '/sapi/v1/margin/asset'
     security_type = 'MARKET_DATA'
 
 
-class get_market_info:
+# Query Cross Margin Pair:
+class place_order:
     params = {'R':['symbol']}
     method = 'GET'
     endpoint = '/sapi/v1/margin/pair'
     security_type = 'MARKET_DATA'
 
-
-class get_all_assets:
+# Get All Margin Assets:
+class place_order:
     params = None
     method = 'GET'
     endpoint = '/sapi/v1/margin/allAssets'
     security_type = 'MARKET_DATA'
 
 
-class get_all_markets:
+# Get All Cross Margin Pairs:
+class place_order:
     params = None
     method = 'GET'
     endpoint = '/sapi/v1/margin/allPairs'
     security_type = 'MARKET_DATA'
 
 
-class get_margin_priceIndex:
+# Query Margin PriceIndex:
+class place_order:
     params = {'R':['symbol']}
     method = 'GET'
     endpoint = '/sapi/v1/margin/priceIndex'
     security_type = 'MARKET_DATA'
 
 
-class get_transfer_history:
-    params = {'R':['type'],
-    		'O':['asset', 'startTime', 'endTime', 'current', 'size']}
+# Margin Account New Order:
+class place_order:
+    params = {'R':['symbol', 'side', 'type'],
+            'O':['isIsolated', 'quantity', 'quoteOrderQty', 'price', 'stopPrice', 'newClientOrderId', 'icebergQty', 'newOrderRespType', 'sideEffectType', 'timeInForce']}
+    method = 'POST'
+    endpoint = '/sapi/v1/margin/order'
+    security_type = 'TRADE'
+
+
+# Margin Account Cancel Order:
+class place_order:
+    params = {'R':['symbol'],
+            'O':['isIsolated', 'orderId', 'origClientOrderId', 'newClientOrderId']}
+    method = 'DELETE'
+    endpoint = '/sapi/v1/margin/order'
+    security_type = 'TRADE'
+
+
+# Margin Account Cancel all Open Orders on a Symbol:
+class place_order:
+    params = {'R':['symbol'],
+            'O':['isIsolated']}
+    method = 'DELETE'
+    endpoint = '/sapi/v1/margin/openOrders'
+    security_type = 'TRADE'
+
+
+# Get Cross Margin Transfer History:
+class place_order:
+    params = {'O':['asset', 'type', 'startTime', 'endTime', 'current', 'size', 'archived']}
     method = 'GET'
     endpoint = '/sapi/v1/margin/transfer'
     security_type = 'USER_DATA'
 
 
-class get_interest_history:
-    params = {'O':['asset', 'startTime', 'endTime', 'current', 'size']}
+# Query Loan Record:
+class place_order:
+    params = {'R':['asset'],
+            'O':['isolatedSymbol', 'txId', 'startTime', 'endTime', 'current', 'size', 'archived']}
+    method = 'GET'
+    endpoint = '/sapi/v1/margin/loan'
+    security_type = 'USER_DATA'
+
+
+# Query Repay Record:
+class place_order:
+    params = {'R':['asset'],
+            'O':['isolatedSymbol', 'txId', 'startTime', 'endTime', 'current', 'size', 'archived']}
+    method = 'GET'
+    endpoint = '/sapi/v1/margin/repay'
+    security_type = 'USER_DATA'
+
+
+# Get Interest History:
+class place_order:
+    params = {'O':['asset', 'isolatedSymbol', 'startTime', 'endTime', 'current', 'size', 'archived']}
     method = 'GET'
     endpoint = '/sapi/v1/margin/interestHistory'
     security_type = 'USER_DATA'
 
 
-class get_liquidation_record:
-    params = {'O':['startTime', 'endTime', 'current', 'size']}
+# Get Force Liquidation Record:
+class place_order:
+    params = {'O':['startTime', 'endTime', 'isolatedSymbol', 'current', 'size']}
     method = 'GET'
     endpoint = '/sapi/v1/margin/forceLiquidationRec'
     security_type = 'USER_DATA'
 
 
-class get_market_orders:
+# Query Cross Margin Account Details:
+class place_order:
+    params = None
+    method = 'GET'
+    endpoint = '/sapi/v1/margin/account'
+    security_type = 'USER_DATA'
+
+
+# Query Margin Account's Order:
+class place_order:
     params = {'R':['symbol'],
-    		'O':['orderId', 'origClientOrderId']}
+            'O':['isIsolated', 'orderId', 'origClientOrderId']}
     method = 'GET'
     endpoint = '/sapi/v1/margin/order'
     security_type = 'USER_DATA'
 
 
-class get_open_orders:
-    params = {'O':['symbol']}
+# Query Margin Account's Open Orders:
+class place_order:
+    params = {'O':['symbol', 'isIsolated']}
     method = 'GET'
     endpoint = '/sapi/v1/margin/openOrders'
     security_type = 'USER_DATA'
 
 
-class get_all_orders:
+# Query Margin Account's All Orders:
+class place_order:
     params = {'R':['symbol'],
-    		'O':['orderId', 'startTime', 'endTime', 'limit']}
+            'O':['isIsolated', 'orderId', 'startTime', 'endTime', 'limit']}
     method = 'GET'
     endpoint = '/sapi/v1/margin/allOrders'
     security_type = 'USER_DATA'
 
 
-class get_all_trades:
+# Query Margin Account's Trade List:
+class place_order:
     params = {'R':['symbol'],
-    		'O':['startTime', 'endTime', 'fromId', 'limit']}
+            'O':['isIsolated', 'startTime', 'endTime', 'fromId', 'limit']}
     method = 'GET'
     endpoint = '/sapi/v1/margin/myTrades'
     security_type = 'USER_DATA'
 
 
-class get_max_borrow_amount:
-    params = {'R':['asset']}
+# Query Max Borrow:
+class place_order:
+    params = {'R':['asset'],
+            'O':['isolatedSymbol']}
     method = 'GET'
     endpoint = '/sapi/v1/margin/maxBorrowable'
     security_type = 'USER_DATA'
 
 
-class get_max_transfer_amount:
-    params = {'R':['asset']}
+# Query Max Transfer-Out Amount:
+class place_order:
+    params = {'R':['asset'],
+            'O':['isolatedSymbol']}
     method = 'GET'
     endpoint = '/sapi/v1/margin/maxTransferable'
     security_type = 'USER_DATA'
+
+
+# Create Isolated Margin Account:
+class place_order:
+    params = {'R':['base', 'quote']}
+    method = 'POST'
+    endpoint = '/sapi/v1/margin/isolated/create'
+    security_type = 'MARGIN'
+
+
+# Isolated Margin Account Transfer:
+class place_order:
+    params = {'R':['asset', 'symbol', 'transFrom', 'transTo', 'amount']}
+    method = 'POST'
+    endpoint = '/sapi/v1/margin/isolated/transfer'
+    security_type = 'MARGIN'
+
+
+# Get Isolated Margin Transfer History:
+class place_order:
+    params = {'R':['symbol'],
+            'O':['asset', 'symbol', 'transFrom', 'transTo', 'startTime', 'endTime', 'current', 'size']}
+    method = 'GET'
+    endpoint = '/sapi/v1/margin/isolated/transfer'
+    security_type = 'USER_DATA'
+
+
+# Query Isolated Margin Account Info
+class place_order:
+    params = {'O':['symbols']}
+    method = 'GET'
+    endpoint = '/sapi/v1/margin/isolated/account'
+    security_type = 'USER_DATA'
+
+
+# Query Isolated Margin Symbol:
+class place_order:
+    params = {'R':['symbol'],
+    'O':['price']}
+    method = 'GET'
+    endpoint = '/sapi/v1/margin/isolated/pair'
+    security_type = 'USER_DATA'
+
+
+# Get All Isolated Margin Symbol:
+class place_order:
+    params = None
+    method = 'GET'
+    endpoint = '/sapi/v1/margin/isolated/allPairs'
+    security_type = 'USER_DATA'
+
+
+# Toggle BNB Burn On Spot Trade And Margin Interest:
+class place_order:
+    params = {'O':['spotBNBBurn', 'interestBNBBurn']}
+    method = 'POST'
+    endpoint = '/sapi/v1/bnbBurn'
+    security_type = 'USER_DATA'
+
+
+# Get BNB Burn Status:
+class place_order:
+    params = None
+    method = 'GET'
+    endpoint = '/sapi/v1/bnbBurn'
+    security_type = 'USER_DATA'
+

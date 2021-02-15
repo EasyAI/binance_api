@@ -1,7 +1,6 @@
 '''
-Endpoints are collected from the futures api section under the official binance api docs:
+Endpoints are collected from the Futures Endpoint api section under the official binance api docs:
 https://binance-docs.github.io/apidocs/spot/en/#futures
-
 '''
 
 # New Future Account Transfer:
