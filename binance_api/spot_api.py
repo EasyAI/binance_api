@@ -39,7 +39,7 @@ class cancel_all_orders:
 
 
 # Query Order:
-class query_order:
+class get_order:
     params = {'R':['symbol'], 
             'O':['orderId', 'origClientOrderId']}
     method = 'GET'
@@ -48,7 +48,7 @@ class query_order:
 
 
 # Current Open Orders:
-class get_openOrders:
+class get_open_orders:
     params = {'R':['symbol']}
     method = 'GET'
     endpoint = '/api/v3/openOrders'
@@ -56,7 +56,7 @@ class get_openOrders:
 
 
 # All Orders:
-class get_allOrders:
+class get_all_orders:
     params = {'R':['symbol'], 
             'O':['orderId', 'startTime', 'endTime', 'limit']}
     method = 'GET'
@@ -91,7 +91,7 @@ class query_order_oco:
 
 
 # Query all OCO:
-class get_allOrders_oco:
+class get_all_orders_oco:
     params = {'O':['fromId', 'startTime', 'endTime', 'limit']}
     method = 'GET'
     endpoint = '/api/v3/allOrderList'
@@ -99,7 +99,7 @@ class get_allOrders_oco:
 
 
 # Query Open OCO:
-class get_openOrders_oco:
+class get_open_orders_oco:
     params = None
     method = 'GET'
     endpoint = '/api/v3/openOrderList'
@@ -115,7 +115,7 @@ class get_accountInfo:
 
 
 # Account Trade List:
-class get_tradeList:
+class get_all_trades:
     params = {'R':['symbol'], 
             'O':['startTime', 'endTime', 'fromId', 'limit']}
     method = 'GET'

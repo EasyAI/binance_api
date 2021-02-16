@@ -40,12 +40,12 @@ def get_custom_trades(kwargs):
                 total_trades_left = 0
 
         if t_id == 0:
-            trades = rest_master.Binance_REST().get_recent_trades(
+            trades = rest_master.Binance_REST().get_recentTrades(
                 symbol=kwargs['symbol'],
                 limit=t_limit)
         else:
             time.sleep(0.75)
-            trades = authApi.get_historical_trades(
+            trades = authApi.get_oldTrades(
                 symbol=kwargs['symbol'], 
                 limit=t_limit, 
                 fromId=t_id)

@@ -146,7 +146,7 @@ class get_cross_accountDetails:
 
 
 # Query Margin Account's Order:
-class get_orders:
+class get_order:
     params = {'R':['symbol'],
             'O':['isIsolated', 'orderId', 'origClientOrderId']}
     method = 'GET'
