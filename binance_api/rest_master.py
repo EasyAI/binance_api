@@ -178,8 +178,8 @@ class Binance_REST:
         return(self.param_check(marketData_api.test_ping))
     def get_serverTime(self):
         return(self.param_check(marketData_api.get_serverTime))
-    def get_ExchangeInfo(self):
-        return(self.param_check(marketData_api.get_ExchangeInfo))
+    def get_exchangeInfo(self):
+        return(self.param_check(marketData_api.get_exchangeInfo))
     def get_orderBook(self, **kwargs):
         return(self.param_check(marketData_api.get_orderBook, kwargs))
     def get_custom_trades(self, **kwargs):
@@ -195,7 +195,7 @@ class Binance_REST:
     def get_custom_candles(self, **kwargs):
         return(custom_data_formatter.get_custom_candles(kwargs))
     def get_candles(self, **kwargs):
-        return(formatter.format_candles(self.param_check(spot_api.get_candles, kwargs), 'REST'))
+        return(formatter.format_candles(self.param_check(marketData_api.get_candles, kwargs), 'REST'))
     def get_averagePrice(self, **kwargs):
         return(self.param_check(marketData_api.get_averagePrice, kwargs))
     def get_24hTicker(self, **kwargs):

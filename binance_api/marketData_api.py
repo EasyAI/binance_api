@@ -20,7 +20,7 @@ class get_serverTime:
 
 
 # Exchange Information:
-class get_ExchangeInfo:
+class get_exchangeInfo:
     params = None
     method = 'GET'
     endpoint = '/api/v3/exchangeInfo'
