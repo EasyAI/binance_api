@@ -143,7 +143,7 @@ class Binance_REST:
     def get_margin_crossTransferHistory(self, **kwargs):
         return(self.param_check(margin_api.get_margin_crossTransferHistory, kwargs))
     def get_loanRecord(self, **kwargs):
-        return(self.param_check(margin_api.get_loanRecor, kwargsd))
+        return(self.param_check(margin_api.get_loanRecord, kwargs))
     def get_repayRecord(self, **kwargs):
         return(self.param_check(margin_api.get_repayRecord, kwargs))
     def get_interestHistory(self, **kwargs):
@@ -402,83 +402,94 @@ class Binance_REST:
 
 
     ## ------------------ [MULTI_API_ENDPOINT] ------------------ ##
-    def get_account(self, api_type=self.default_api_type):
+    def get_account(self, api_type=None):
+        if api_type == None: api_type = self.default_api_type
         if api_type == 'SPOT':      return(self.param_check(spot_api.get_accountInfo))
         elif api_type == 'MARGIN':  return(self.param_check(margin_api.get_cross_accountDetails))
         elif api_type == None:      return('PLEASE_SPECIFY_API_TYPE, api_type=(MARGIN/SPOT)')
 
-    def place_order(self, api_type=self.default_api_type, **kwargs):
+    def place_order(self, api_type=None, **kwargs):
+        if api_type == None: api_type = self.default_api_type
         if api_type == 'SPOT':      return(self.param_check(spot_api.place_order, kwargs))
         elif api_type == 'MARGIN':  return(self.param_check(margin_api.place_order, kwargs))
         elif api_type == None:      return('PLEASE_SPECIFY_API_TYPE, api_type=(MARGIN/SPOT)')
 
-    def get_order(self, api_type=self.default_api_type, **kwargs):
+    def get_order(self, api_type=None, **kwargs):
+        if api_type == None: api_type = self.default_api_type
         if api_type == 'SPOT':      return(self.param_check(spot_api.get_order, kwargs))
         elif api_type == 'MARGIN':  return(self.param_check(margin_api.get_order, kwargs))
         elif api_type == None:      return('PLEASE_SPECIFY_API_TYPE, api_type=(MARGIN/SPOT)')
 
-    def cancel_order(self, api_type=self.default_api_type, **kwargs):
+    def cancel_order(self, api_type=None, **kwargs):
+        if api_type == None: api_type = self.default_api_type
         if api_type == 'SPOT':      return(self.param_check(spot_api.cancel_order, kwargs))
         elif api_type == 'MARGIN':  return(self.param_check(margin_api.cancel_order, kwargs))
         elif api_type == None:      return('PLEASE_SPECIFY_API_TYPE, api_type=(MARGIN/SPOT)')
 
-    def cancel_all_orders(self, api_type=self.default_api_type, **kwargs):
+    def cancel_all_orders(self, api_type=None, **kwargs):
+        if api_type == None: api_type = self.default_api_type
         if api_type == 'SPOT':      return(self.param_check(spot_api.cancel_all_orders, kwargs))
         elif api_type == 'MARGIN':  return(self.param_check(margin_api.cancel_all_orders, kwargs))
         elif api_type == None:      return('PLEASE_SPECIFY_API_TYPE, api_type=(MARGIN/SPOT)')
 
-    def get_all_orders(self, api_type=self.default_api_type, **kwargs):
+    def get_all_orders(self, api_type=None, **kwargs):
+        if api_type == None: api_type = self.default_api_type
         if api_type == 'SPOT':      return(self.param_check(spot_api.get_all_orders, kwargs))
         elif api_type == 'MARGIN':  return(self.param_check(margin_api.get_all_orders, kwargs))
         elif api_type == None:      return('PLEASE_SPECIFY_API_TYPE, api_type=(MARGIN/SPOT)')
 
-    def get_all_trades(self, api_type=self.default_api_type, **kwargs):
+    def get_all_trades(self, api_type=None, **kwargs):
+        if api_type == None: api_type = self.default_api_type
         if api_type == 'SPOT':      return(self.param_check(spot_api.get_all_trades, kwargs))
         elif api_type == 'MARGIN':  return(self.param_check(margin_api.get_all_trades, kwargs))
         elif api_type == None:      return('PLEASE_SPECIFY_API_TYPE, api_type=(MARGIN/SPOT)')
 
-    def get_open_orders(self, api_type=self.default_api_type, **kwargs):
+    def get_open_orders(self, api_type=None, **kwargs):
+        if api_type == None: api_type = self.default_api_type
         if api_type == 'SPOT':      return(self.param_check(spot_api.get_open_orders, kwargs))
         elif api_type == 'MARGIN':  return(self.param_check(margin_api.get_open_orders, kwargs))
         elif api_type == None:      return('PLEASE_SPECIFY_API_TYPE, api_type=(MARGIN/SPOT)')
 
 
     def param_check(self, api_info, users_passed_parameters=None):
-        if api_info.params != None:
-            missingParameters = []
-            allParams = []
+        if users_passed_parameters==None or not('IS_TEST' in users_passed_parameters):
+            if api_info.params != None:
+                missingParameters = []
+                allParams = []
 
-            if 'symbol' in users_passed_parameters:
-                if '-' in users_passed_parameters:
-                    base, quote = users_passed_parameters['symbol'].split('-')
-                    users_passed_parameters.update({'symbol':(quote+base).upper()})
+                if 'symbol' in users_passed_parameters:
+                    if '-' in users_passed_parameters:
+                        base, quote = users_passed_parameters['symbol'].split('-')
+                        users_passed_parameters.update({'symbol':(quote+base).upper()})
 
-            if 'R' in api_info.params:
-                allParams += api_info.params['R']
-                for param in api_info.params['R']:
-                    if not(param in users_passed_parameters):
-                        missingParameters.append(param)
+                if 'R' in api_info.params:
+                    allParams += api_info.params['R']
+                    for param in api_info.params['R']:
+                        if not(param in users_passed_parameters):
+                            missingParameters.append(param)
 
-            if len(missingParameters) >= 1:
-                return('MISSING_REQUIRED_PARAMETERS', missingParameters)
+                if len(missingParameters) >= 1:
+                    return('MISSING_REQUIRED_PARAMETERS', missingParameters)
 
-            if 'O' in api_info.params:
-                allParams += api_info.params['O']
+                if 'O' in api_info.params:
+                    allParams += api_info.params['O']
 
-            unknownParams = []
+                unknownParams = []
 
-            for param in users_passed_parameters:
-                if not(param in allParams):
-                    unknownParams.append(param)
+                for param in users_passed_parameters:
+                    if not(param in allParams):
+                        unknownParams.append(param)
 
-            if len(unknownParams) >= 1:
-                return('UNEXPECTED_PARAMETERS', unknownParams)
+                if len(unknownParams) >= 1:
+                    return('UNEXPECTED_PARAMETERS', unknownParams)
 
-            params = users_passed_parameters
-        else:
-            if users_passed_parameters != None and users_passed_parameters != {}:
-                return('ENDPOINT_TAKES_NO_PARAMETERS_BUT_SOME_WHERE_GIVEN', users_passed_parameters)
-            params = {}
+                params = users_passed_parameters
+            else:
+                if users_passed_parameters != None and users_passed_parameters != {}:
+                    return('ENDPOINT_TAKES_NO_PARAMETERS_BUT_SOME_WHERE_GIVEN', users_passed_parameters)
+                params = {}
+        else: 
+             params = {}
 
         req_KEY = False
         req_SIG = False

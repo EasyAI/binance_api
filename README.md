@@ -1,8 +1,8 @@
 # binance_api
-Contains the following binance apis: MARGIN, SPOT (normal), WEBSOCKET, WAPI, USER DATA STREAM
+Contains all currently availible api endpoints found at the binanace docs.
 
 ## Description
-This api is written with the endpoint reference of the docs found here: https://github.com/binance-exchange/binance-official-api-docs,
+This api is written with the endpoint reference of the docs found here: https://binance-docs.github.io/apidocs/spot/en/#change-log,
 I decided to re-do the api to as the one I was using was dated and I will update projects to use this one as well as implementing it in future projects
 
 ### Repository Contains:

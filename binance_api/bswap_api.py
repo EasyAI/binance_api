@@ -64,4 +64,4 @@ class get_swap_history:
     params = {'O':['swapId', 'startTime', 'endTime', 'status', 'quoteAsset', 'baseAsset', 'limit']}
     method = 'GET'
     endpoint = '/sapi/v1/bswap/swap'
-    security_type = 'NONE'
+    security_type = 'USER_DATA'
