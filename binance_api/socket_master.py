@@ -11,7 +11,6 @@ import threading
 
 from . import formatter
 
-from . import rest_master
 from . import websocket_api
 
 ## sets up the socket BASE for binances socket API.
@@ -480,8 +479,8 @@ class Binance_SOCK:
 
     def _set_initial_depth(self, symbol, rest_api):
         try:
-            rest_data = rest_api.get_market_depth(symbol=symbol, limit=self.BASE_DEPTH_LIMIT)
-            hist_books = formatter.format_depth(rest_data, 'SPOT')
+            rest_data = rest_api.get_orderBook(symbol=symbol, limit=self.BASE_DEPTH_LIMIT)
+            hist_books = formatter.format_depth(rest_data, 'REST')
         except Exception as error:
             logging.critical('[SOCKET_MASTER] _set_initial_depth error {0}'.format(error))
             logging.warning('[SOCKET_MASTER] _set_initial_depth {0}'.format(rest_data))
