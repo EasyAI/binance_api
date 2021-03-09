@@ -35,6 +35,7 @@ REQUIRE_SIGNATURE = ['USER_DATA', 'TRADE', 'MARGIN']
 class Binance_REST:
 
     def __init__(self, public_key=None, private_key=None, default_api_type=None):
+        self.session = requests.Session()
         self.requests_made  = 0
         self.errors         = 0
 
@@ -522,7 +523,7 @@ class Binance_REST:
             headers = None
 
         logging.debug('[REST_MASTER] QUERY URL {0}'.format(urlQuery))
-       	api_resp = requests.request(method, urlQuery, headers=headers)
+       	api_resp = self.session.request(method, urlQuery, headers=headers)
         data = api_resp.json()
         logging.debug('[REST_MASTER] QUERY DATA {0}'.format(data))
 
