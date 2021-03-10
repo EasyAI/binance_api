@@ -378,14 +378,14 @@ class Binance_SOCK:
         return(self.id_counter)
 
 
-    def _on_Open(self):
+    def _on_Open(self, wsapp):
         '''
         This is called to manually open the websocket connection.
         '''
         logging.debug('[SOCKET_MASTER] Websocket Opened.')
 
 
-    def _on_Message(self, message):
+    def _on_Message(self, wsapp, message):
         '''
         This is used to handle any messages recived via the websocket.
         '''
@@ -439,28 +439,28 @@ class Binance_SOCK:
 
 
 
-    def _on_Ping(self, data):
+    def _on_Ping(self, wsapp, message):
         '''
         This is called to manually open the websocket connection.
         '''
         logging.debug('[SOCKET_MASTER] Websocket ping.')
 
 
-    def _on_Pong(self):
+    def _on_Pong(self, wsapp, message):
         '''
         This is called to manually open the websocket connection.
         '''
         logging.debug('[SOCKET_MASTER] Websocket pong.')
 
 
-    def _on_Error(self, error):
+    def _on_Error(self, wsapp, error):
         '''
         This is called when the socket recives an connection based error.
         '''
         logging.warning('[SOCKET_MASTER] Socket error: {0}'.format(error))
 
 
-    def _on_Close(self):
+    def _on_Close(self, wsapp):
         '''
         This is called for manually closing the websocket.
         '''
