@@ -7,15 +7,22 @@ I decided to re-do the api to as the one I was using was dated and I will update
 
 ### Repository Contains:
 - binance_api
-  - rest_master.py : This is where the main rest api object is created "Binance_REST".
-  - socket_master.py : This is where the main socket api object is created "Binance_SOCK".
-  - custom_data_formatter.py : Holds logic to create custom candle intervals/limits.
-  - margin_api.py : This contains object datasets for each margin api endpoint.
-  - spot_api.py : This contains object datasets for each spot (normal) api endpoint.
-  - wapi_api.py : This contains object datasets for each wapi api endpoint.
-  - userDataStream_api.py : This contains object datasets for each user data stream api endpoint.
-  - websocket_api.py : This contains object datasets for each websocket api stream.
+  - api_master_rest_caller.py : This is where the main rest api object is created "Binance_REST".
+  - api_master_socket_caller.py : This is where the main socket api object is created "Binance_SOCK".
+  - api_support_tools.py : Holds logic to create custom candle intervals/limits/other support toold.
   - formatter.py : this is used for standerdizing formats when combinding rest data with socket data to combined update and live data together.
+  - blvt_api.py : Holds blvt api endpoint objects.
+  - bswap_api.py : Holds bswap api endpoint objects.
+  - futures_api.py : Holds futures api endpoint objects.
+  - margin_api.py : Holds margin api endpoint objects.
+  - marketData_api.py : Holds market data api endpoint objects.
+  - mining_api.py : Holds margin api endpoint objects.
+  - savings_api.py : Holds savings api endpoint objects.
+  - spot_api.py : Holds spot api endpoint objects.
+  - subAccount_api.py : Holds sub account api endpoint objects.
+  - userDataStream_api.py : Holds user data stream api endpoint objects.
+  - wallet_api.py : Holds wallet api endpoint objects.
+  - websocket_api.py : Holds websocket api endpoint objects.
 
 ## Usage
 To quickly install all the required modules use 'pip3 install -r requirements', this should install the modules for you.
