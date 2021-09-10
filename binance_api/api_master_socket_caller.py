@@ -418,7 +418,7 @@ class Binance_SOCK:
         logging.warning('[SOCKET_MASTER] Socket error: {0}'.format(error))
 
 
-    def _on_Close(self, wsapp):
+    def _on_Close(self, wsapp, close_status_code, close_msg):
         '''
         This is called for manually closing the websocket.
         '''
